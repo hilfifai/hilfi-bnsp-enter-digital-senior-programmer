@@ -173,6 +173,15 @@ func (s *SalesOrderService) GetSalesOrders(ctx context.Context, filter dto.Sales
 		return nil, 0, fmt.Errorf("failed to get sales orders: %w", err)
 	}
 
+	// Fetch items for each sales order
+	for i := range orders {
+		items, err := s.salesOrderRepo.GetItemsByOrderID(ctx, orders[i].ID)
+		if err != nil {
+			return nil, 0, fmt.Errorf("failed to fetch sales order items: %w", err)
+		}
+		orders[i].Items = items
+	}
+
 	return orders, len(orders), nil
 }
 

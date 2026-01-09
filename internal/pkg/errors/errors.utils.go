@@ -115,6 +115,15 @@ var (
 	ErrCreateDeliveryOrder     = errors.New("failed to create delivery order")
 	ErrCreateDeliveryOrderItem = errors.New("failed to create delivery order item")
 	ErrUpdateDeliveryOrder     = errors.New("failed to update delivery order")
+	ErrDeliveryOrderNotFound   = errors.New("delivery order not found")
+
+	// Sales return errors
+	ErrGenerateReturnNumber    = errors.New("failed to generate return number")
+	ErrCreateSalesReturn       = errors.New("failed to create sales return")
+	ErrCreateSalesReturnItem   = errors.New("failed to create sales return item")
+	ErrUpdateDeliveryOrderItem = errors.New("failed to update delivery order item")
+	ErrInvalidReturnedQuantity = errors.New("invalid returned quantity")
+	ErrExceedDeliveredQuantity = errors.New("returned quantity exceeds delivered quantity")
 
 	ErrAssessmentValidation        = errors.New("Assessment validation failed")
 	ErrAssessmentNotFound          = errors.New("Assessment not found")

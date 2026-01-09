@@ -76,19 +76,22 @@ type Customer struct {
 }
 
 type DeliveryOrder struct {
-	ID            uuid.UUID  `db:"id" json:"id"`
-	DONumber      string     `db:"do_number" json:"do_number"`
-	SalesOrderID  uuid.UUID  `db:"sales_order_id" json:"sales_order_id"`
-	WarehouseID   uuid.UUID  `db:"warehouse_id" json:"warehouse_id"`
-	Status        string     `db:"status" json:"status"`
-	DeliveryDate  time.Time  `db:"delivery_date" json:"delivery_date"`
-	DriverName    string     `db:"driver_name" json:"driver_name"`
-	VehicleNumber string     `db:"vehicle_number" json:"vehicle_number"`
-	Notes         *string    `db:"notes" json:"notes,omitempty"`
-	DeliveredBy   *uuid.UUID `db:"delivered_by" json:"delivered_by,omitempty"`
-	CreatedBy     uuid.UUID  `db:"created_by" json:"-"`
-	CreatedAt     time.Time  `db:"created_at" json:"created_at"`
-	UpdatedAt     time.Time  `db:"updated_at" json:"updated_at"`
+	ID              uuid.UUID           `db:"id" json:"id"`
+	DONumber        string              `db:"do_number" json:"do_number"`
+	SalesOrderID    uuid.UUID           `db:"sales_order_id" json:"sales_order_id"`
+	WarehouseID     uuid.UUID           `db:"warehouse_id" json:"warehouse_id"`
+	Status          string              `db:"status" json:"status"`
+	DeliveryDate    time.Time           `db:"delivery_date" json:"delivery_date"`
+	DriverName      string              `db:"driver_name" json:"driver_name"`
+	VehicleNumber   string              `db:"vehicle_number" json:"vehicle_number"`
+	DeliveryAddress *string             `db:"delivery_address" json:"delivery_address,omitempty"`
+	Notes           *string             `db:"notes" json:"notes,omitempty"`
+	DeliveredBy     *uuid.UUID          `db:"delivered_by" json:"delivered_by,omitempty"`
+	CreatedBy       uuid.UUID           `db:"created_by" json:"-"`
+	UpdatedBy       uuid.UUID           `db:"updated_by" json:"-"`
+	CreatedAt       time.Time           `db:"created_at" json:"created_at"`
+	UpdatedAt       time.Time           `db:"updated_at" json:"updated_at"`
+	Items           []DeliveryOrderItem `db:"-" json:"items,omitempty"`
 }
 
 type DeliveryOrderItem struct {

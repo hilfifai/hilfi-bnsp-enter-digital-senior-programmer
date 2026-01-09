@@ -13,6 +13,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type IHandler interface {
@@ -106,6 +107,8 @@ func (h *Handler) CreateDeliveryOrder(c *gin.Context) {
 // @Param sales_order_id query string false "Filter by sales order ID"
 // @Param warehouse_id query string false "Filter by warehouse ID"
 // @Param status query string false "Filter by status"
+// @Param start_date query string false "Filter by start date (RFC3339)"
+// @Param end_date query string false "Filter by end date (RFC3339)"
 // @Param limit query int false "Limit results"
 // @Param offset query int false "Offset results"
 // @Success 200 {object} types.ResponseAPI
@@ -113,9 +116,28 @@ func (h *Handler) CreateDeliveryOrder(c *gin.Context) {
 // @Failure 500 {object} types.ResponseAPI
 // @Router /api/v1/delivery-orders [get]
 func (h *Handler) GetDeliveryOrders(c *gin.Context) {
-	// TODO: Implement GetDeliveryOrders if the service supports it
-	c.JSON(http.StatusNotImplemented, gin.H{
-		"message": "Get delivery orders not implemented yet",
+	ctx := c.Request.Context()
+	log := logger.FromContext(ctx)
+
+	var filter dto.DeliveryOrderFilter
+	if err := c.ShouldBindQuery(&filter); err != nil {
+		log.Error().Err(err).Msg("Failed to bind query")
+		helper.APIBindingError(c, err)
+		return
+	}
+
+	orders, total, err := h.Service.GetDeliveryOrders(ctx, filter)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to get delivery orders")
+		helper.APIInternalServerError(c, "Failed to get delivery orders", err)
+		return
+	}
+
+	helper.APISuccess(c, "Delivery orders retrieved successfully", gin.H{
+		"data":   orders,
+		"total":  total,
+		"limit":  filter.Limit,
+		"offset": filter.Offset,
 	})
 }
 
@@ -132,10 +154,30 @@ func (h *Handler) GetDeliveryOrders(c *gin.Context) {
 // @Failure 500 {object} types.ResponseAPI
 // @Router /api/v1/delivery-orders/{id} [get]
 func (h *Handler) GetDeliveryOrder(c *gin.Context) {
-	// TODO: Implement GetDeliveryOrder if the service supports it
-	c.JSON(http.StatusNotImplemented, gin.H{
-		"message": "Get delivery order not implemented yet",
-	})
+	ctx := c.Request.Context()
+	log := logger.FromContext(ctx)
+
+	idStr := c.Param("id")
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		log.Error().Err(err).Msg("Invalid delivery order ID")
+		helper.APIBadRequest(c, "Invalid delivery order ID", err)
+		return
+	}
+
+	deliveryOrder, err := h.Service.GetDeliveryOrderByID(ctx, id)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to get delivery order")
+		switch {
+		case errors.Is(err, apperrors.ErrDeliveryOrderNotFound):
+			helper.APINotFound(c, "Delivery order not found", err)
+		default:
+			helper.APIInternalServerError(c, "Failed to get delivery order", err)
+		}
+		return
+	}
+
+	helper.APISuccess(c, "Delivery order retrieved successfully", deliveryOrder)
 }
 
 // CreateSalesReturn godoc
@@ -193,7 +235,7 @@ func (h *Handler) NewRoutes(e *gin.RouterGroup, authMiddleware gin.HandlerFunc) 
 		deliveryOrders.POST("", h.CreateDeliveryOrder)
 		deliveryOrders.GET("", h.GetDeliveryOrders)
 		deliveryOrders.GET("/:id", h.GetDeliveryOrder)
-		
+
 		// Returns
 		returns := deliveryOrders.Group("/returns")
 		returns.POST("", h.CreateSalesReturn)
