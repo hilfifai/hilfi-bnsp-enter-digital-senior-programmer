@@ -1,0 +1,47 @@
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Documentation
+README.md
+README*
+docs/
+*.md
+
+# Testing
+coverage.html
+tests/
+
+# Docker
+docker-compose.yml
+Dockerfile
+.dockerignore
+
+# Development
+.env
+.env.example
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary
+tmp/
+temp/
+*.tmp
+
+# IDE specific
+*.iml
+*.ipr
+*.iws
