@@ -30,6 +30,8 @@ type SalesOrder struct {
 	OrderDate            time.Time        `db:"order_date" json:"order_date"`
 	ExpectedDeliveryDate *time.Time       `db:"expected_delivery_date" json:"expected_delivery_date,omitempty"`
 	DeliveryDate         *time.Time       `db:"delivery_date" json:"delivery_date,omitempty"`
+	ApprovedBy           *uuid.UUID       `db:"approved_by" json:"approved_by,omitempty"`
+	ApprovedAt           *time.Time       `db:"approved_at" json:"approved_at,omitempty"`
 	CreatedBy            uuid.UUID        `db:"created_by" json:"-"`
 	UpdatedBy            uuid.UUID        `db:"updated_by" json:"-"`
 	Notes                *string          `db:"notes" json:"notes,omitempty"`

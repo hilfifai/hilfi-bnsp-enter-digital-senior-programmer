@@ -22,10 +22,13 @@ type IInventoryRepository interface {
 
 	// Stock movement
 	CreateStockMovement(ctx context.Context, movement *entity.StockMovement) error
+	CreateStockMovementTx(ctx context.Context, tx interface{}, movement *entity.StockMovement) error
 	UpdateStockMovement(ctx context.Context, tx interface{}, movement *entity.StockMovement) error
 
 	// Product stock
 	GetProductStockByProductID(ctx context.Context, productID uuid.UUID) ([]entity.InventoryStock, error)
+	GetStockByWarehouse(ctx context.Context, warehouseID uuid.UUID) ([]entity.InventoryStock, error)
+	GetStockByWarehouseAndProduct(ctx context.Context, warehouseID, productID uuid.UUID) ([]entity.InventoryStock, error)
 
 	// Warehouse
 	GetWarehouseByID(ctx context.Context, warehouseID uuid.UUID) (*entity.Warehouse, error)
@@ -35,7 +38,9 @@ type IInventoryRepository interface {
 
 	// Additional methods for dashboard
 	GetLowStockCount(ctx context.Context) (int, error)
+	GetOutOfStockCount(ctx context.Context) (int, error)
 	GetTotalProducts(ctx context.Context) (int, error)
+	GetPendingMovementsCount(ctx context.Context) (int, error)
 
 	// Report methods
 	GetStockReport(ctx context.Context, filter dto.StockReportFilter) ([]entity.StockReport, error)
@@ -43,6 +48,10 @@ type IInventoryRepository interface {
 	GetMovementReport(ctx context.Context, filter dto.MovementReportFilter) ([]entity.StockMovement, int, error)
 	GetInventoryValuation(ctx context.Context, warehouseID *uuid.UUID) ([]entity.InventoryValuation, error)
 	GetAllWarehouses(ctx context.Context) ([]entity.Warehouse, error)
+
+	// Stock opname
+	CreateStockOpname(ctx context.Context, opname *entity.StockOpname) error
+	GetProductStockHistory(ctx context.Context, productID, warehouseID uuid.UUID, days int) ([]entity.StockMovement, error)
 }
 
 type InventoryRepository struct {
@@ -175,11 +184,11 @@ func (r *InventoryRepository) CreateStock(ctx context.Context, stock *entity.Inv
 	query := `
 		INSERT INTO inventory_stocks (
 			id, product_id, warehouse_id, location_id, quantity, reserved_quantity,
-			available_quantity, batch_number, expiry_date, created_by, updated_by,
+			batch_number, expiry_date, created_by, updated_by,
 			created_at, updated_at
 		) VALUES (
 			:id, :product_id, :warehouse_id, :location_id, :quantity, :reserved_quantity,
-			:available_quantity, :batch_number, :expiry_date, :created_by, :updated_by,
+			:batch_number, :expiry_date, :created_by, :updated_by,
 			:created_at, :updated_at
 		)
 	`
@@ -194,8 +203,7 @@ func (r *InventoryRepository) CreateStockTx(ctx context.Context, tx interface{},
 func (r *InventoryRepository) UpdateStock(ctx context.Context, id uuid.UUID, stock *entity.InventoryStock) error {
 	query := `
 		UPDATE inventory_stocks
-		SET quantity = :quantity, reserved_quantity = :reserved_quantity,
-			available_quantity = :available_quantity, updated_by = :updated_by,
+		SET quantity = :quantity, reserved_quantity = :reserved_quantity, updated_by = :updated_by,
 			updated_at = :updated_at
 		WHERE id = :id
 	`
@@ -226,6 +234,28 @@ func (r *InventoryRepository) CreateStockMovement(ctx context.Context, movement 
 	return err
 }
 
+func (r *InventoryRepository) CreateStockMovementTx(ctx context.Context, tx interface{}, movement *entity.StockMovement) error {
+	query := `
+		INSERT INTO stock_movements (
+			id, reference_number, movement_type, product_id, from_warehouse_id,
+			from_location_id, to_warehouse_id, to_location_id, quantity, unit_price,
+			total_value, notes, status, movement_date, approved_by, approved_at,
+			created_by, updated_by, created_at, updated_at
+		) VALUES (
+			:id, :reference_number, :movement_type, :product_id, :from_warehouse_id,
+			:from_location_id, :to_warehouse_id, :to_location_id, :quantity, :unit_price,
+			:total_value, :notes, :status, :movement_date, :approved_by, :approved_at,
+			:created_by, :updated_by, :created_at, :updated_at
+		)
+	`
+	sqlxTx, ok := tx.(*sqlx.Tx)
+	if !ok {
+		return fmt.Errorf("invalid transaction type")
+	}
+	_, err := sqlxTx.NamedExecContext(ctx, query, movement)
+	return err
+}
+
 func (r *InventoryRepository) UpdateStockMovement(ctx context.Context, tx interface{}, movement *entity.StockMovement) error {
 	query := `
 		UPDATE stock_movements
@@ -239,10 +269,10 @@ func (r *InventoryRepository) UpdateStockMovement(ctx context.Context, tx interf
 func (r *InventoryRepository) GetProductStockByProductID(ctx context.Context, productID uuid.UUID) ([]entity.InventoryStock, error) {
 	var stocks []entity.InventoryStock
 	query := `
-		SELECT is.*, w.code as warehouse_code, w.name as warehouse_name
-		FROM inventory_stocks is
-		JOIN warehouses w ON is.warehouse_id = w.id
-		WHERE is.product_id = $1
+		SELECT istok.*, w.code as warehouse_code, w.name as warehouse_name
+		FROM inventory_stocks istok
+		JOIN warehouses w ON istok.warehouse_id = w.id
+		WHERE istok.product_id = $1
 		ORDER BY w.name
 	`
 	err := r.db.SelectContext(ctx, &stocks, query, productID)
@@ -287,26 +317,26 @@ func (r *InventoryRepository) GetStockReport(ctx context.Context, filter dto.Sto
 			pc.name as category_name,
 			w.name as warehouse_name,
 			wl.code as location_code,
-			COALESCE(is.quantity, 0) as current_stock,
-			COALESCE(is.reserved_quantity, 0) as reserved_stock,
-			COALESCE(is.available_quantity, 0) as available_stock,
+			COALESCE(istok.quantity, 0) as current_stock,
+			COALESCE(istok.reserved_quantity, 0) as reserved_stock,
+			COALESCE(istok.available_quantity, 0) as available_stock,
 			p.min_stock,
 			p.max_stock,
 			p.unit_price,
-			COALESCE(is.available_quantity, 0) * p.unit_price as total_value,
+			COALESCE(istok.available_quantity, 0) * p.unit_price as total_value,
 			(SELECT MAX(created_at) FROM stock_movements WHERE product_id = p.id) as last_movement
 		FROM products p
 		LEFT JOIN product_categories pc ON p.category_id = pc.id
-		LEFT JOIN inventory_stocks is ON p.id = is.product_id
-		LEFT JOIN warehouses w ON is.warehouse_id = w.id
-		LEFT JOIN warehouse_locations wl ON is.location_id = wl.id
+		LEFT JOIN inventory_stocks istok ON p.id = istok.product_id
+		LEFT JOIN warehouses w ON istok.warehouse_id = w.id
+		LEFT JOIN warehouse_locations wl ON istok.location_id = wl.id
 		WHERE p.deleted_at IS NULL
 	`
 	args := []interface{}{}
 	argIdx := 1
 
 	if filter.WarehouseID != nil {
-		query += fmt.Sprintf(` AND is.warehouse_id = $%d`, argIdx)
+		query += fmt.Sprintf(` AND istok.warehouse_id = $%d`, argIdx)
 		args = append(args, *filter.WarehouseID)
 		argIdx++
 	}
@@ -346,19 +376,19 @@ func (r *InventoryRepository) GetLowStockReport(ctx context.Context) ([]entity.S
 			pc.name as category_name,
 			w.name as warehouse_name,
 			wl.code as location_code,
-			COALESCE(SUM(is.quantity), 0) as current_stock,
-			COALESCE(SUM(is.reserved_quantity), 0) as reserved_stock,
-			COALESCE(SUM(is.available_quantity), 0) as available_stock,
+			COALESCE(SUM(istok.quantity), 0) as current_stock,
+			COALESCE(SUM(istok.reserved_quantity), 0) as reserved_stock,
+			COALESCE(SUM(istok.available_quantity), 0) as available_stock,
 			p.min_stock,
 			p.max_stock,
 			p.unit_price,
-			COALESCE(SUM(is.available_quantity), 0) * p.unit_price as total_value
+			COALESCE(SUM(istok.available_quantity), 0) * p.unit_price as total_value
 		FROM products p
 		LEFT JOIN product_categories pc ON p.category_id = pc.id
-		LEFT JOIN inventory_stocks is ON p.id = is.product_id
-		LEFT JOIN warehouses w ON is.warehouse_id = w.id
-		LEFT JOIN warehouse_locations wl ON is.location_id = wl.id
-		WHERE p.deleted_at IS NULL AND p.current_stock <= p.min_stock
+		LEFT JOIN inventory_stocks istok ON p.id = istok.product_id
+		LEFT JOIN warehouses w ON istok.warehouse_id = w.id
+		LEFT JOIN warehouse_locations wl ON istok.location_id = wl.id
+		WHERE p.is_active = true AND p.current_stock <= p.min_stock
 		GROUP BY p.id, p.sku, p.name, pc.name, w.name, wl.code, p.min_stock, p.max_stock, p.unit_price
 		ORDER BY p.current_stock ASC
 	`
@@ -434,27 +464,42 @@ func (r *InventoryRepository) GetMovementReport(ctx context.Context, filter dto.
 
 func (r *InventoryRepository) GetInventoryValuation(ctx context.Context, warehouseID *uuid.UUID) ([]entity.InventoryValuation, error) {
 	var valuations []entity.InventoryValuation
-	query := `
-		SELECT 
-			w.id as warehouse_id,
-			w.name as warehouse_name,
-			COUNT(DISTINCT is.product_id) as total_products,
-			COALESCE(SUM(is.quantity), 0) as total_quantity,
-			COALESCE(SUM(is.quantity * p.cost_price), 0) as total_value,
-			COALESCE(AVG(is.quantity * p.cost_price), 0) as average_value
-		FROM warehouses w
-		LEFT JOIN inventory_stocks is ON w.id = is.warehouse_id
-		LEFT JOIN products p ON is.product_id = p.id
-		WHERE w.is_active = true
-	`
-	args := []interface{}{}
+	var query string
+	var args []interface{}
 
 	if warehouseID != nil {
-		query += ` AND w.id = $1`
+		query = `
+			SELECT 
+				w.id as warehouse_id,
+				w.name as warehouse_name,
+				COUNT(DISTINCT istok.product_id) as total_products,
+				COALESCE(SUM(istok.quantity), 0) as total_quantity,
+				COALESCE(SUM(CAST(istok.quantity AS numeric) * COALESCE(CAST(p.cost_price AS numeric), 0)), 0) as total_value,
+				COALESCE(AVG(CAST(istok.quantity AS numeric) * COALESCE(CAST(p.cost_price AS numeric), 0)), 0) as average_value
+			FROM warehouses w
+			LEFT JOIN inventory_stocks istok ON w.id = istok.warehouse_id
+			LEFT JOIN products p ON istok.product_id = p.id
+			WHERE w.is_active = true AND w.id = $1
+			GROUP BY w.id, w.name ORDER BY w.name
+		`
 		args = append(args, *warehouseID)
+	} else {
+		query = `
+			SELECT 
+				w.id as warehouse_id,
+				w.name as warehouse_name,
+				COUNT(DISTINCT istok.product_id) as total_products,
+				COALESCE(SUM(istok.quantity), 0) as total_quantity,
+				COALESCE(SUM(CAST(istok.quantity AS numeric) * COALESCE(CAST(p.cost_price AS numeric), 0)), 0) as total_value,
+				COALESCE(AVG(CAST(istok.quantity AS numeric) * COALESCE(CAST(p.cost_price AS numeric), 0)), 0) as average_value
+			FROM warehouses w
+			LEFT JOIN inventory_stocks istok ON w.id = istok.warehouse_id
+			LEFT JOIN products p ON istok.product_id = p.id
+			WHERE w.is_active = true
+			GROUP BY w.id, w.name ORDER BY w.name
+		`
 	}
 
-	query += ` GROUP BY w.id, w.name ORDER BY w.name`
 	err := r.db.SelectContext(ctx, &valuations, query, args...)
 	return valuations, err
 }
@@ -464,4 +509,60 @@ func (r *InventoryRepository) GetAllWarehouses(ctx context.Context) ([]entity.Wa
 	query := `SELECT * FROM warehouses WHERE is_active = true ORDER BY name`
 	err := r.db.SelectContext(ctx, &warehouses, query)
 	return warehouses, err
+}
+
+func (r *InventoryRepository) GetStockByWarehouse(ctx context.Context, warehouseID uuid.UUID) ([]entity.InventoryStock, error) {
+	var stocks []entity.InventoryStock
+	query := `
+		SELECT istok.*, p.sku as product_sku, p.name as product_name, w.code as warehouse_code, w.name as warehouse_name
+		FROM inventory_stocks istok
+		JOIN products p ON istok.product_id = p.id
+		JOIN warehouses w ON istok.warehouse_id = w.id
+		WHERE istok.warehouse_id = $1
+		ORDER BY p.name
+	`
+	err := r.db.SelectContext(ctx, &stocks, query, warehouseID)
+	return stocks, err
+}
+
+func (r *InventoryRepository) GetStockByWarehouseAndProduct(ctx context.Context, warehouseID, productID uuid.UUID) ([]entity.InventoryStock, error) {
+	var stocks []entity.InventoryStock
+	query := `
+		SELECT istok.*, w.code as warehouse_code, w.name as warehouse_name
+		FROM inventory_stocks istok
+		JOIN warehouses w ON istok.warehouse_id = w.id
+		WHERE istok.warehouse_id = $1 AND istok.product_id = $2
+		ORDER BY istok.created_at
+	`
+	err := r.db.SelectContext(ctx, &stocks, query, warehouseID, productID)
+	return stocks, err
+}
+
+func (r *InventoryRepository) GetOutOfStockCount(ctx context.Context) (int, error) {
+	var count int
+	query := `SELECT COUNT(*) FROM products WHERE is_active = true AND current_stock = 0`
+	err := r.db.GetContext(ctx, &count, query)
+	return count, err
+}
+
+func (r *InventoryRepository) GetPendingMovementsCount(ctx context.Context) (int, error) {
+	var count int
+	query := `SELECT COUNT(*) FROM stock_movements WHERE status = 'PENDING'`
+	err := r.db.GetContext(ctx, &count, query)
+	return count, err
+}
+
+func (r *InventoryRepository) GetProductStockHistory(ctx context.Context, productID, warehouseID uuid.UUID, days int) ([]entity.StockMovement, error) {
+	var movements []entity.StockMovement
+	query := `
+		SELECT sm.*, p.sku as product_sku, p.name as product_name
+		FROM stock_movements sm
+		LEFT JOIN products p ON sm.product_id = p.id
+		WHERE sm.product_id = $1 
+		AND (sm.from_warehouse_id = $2 OR sm.to_warehouse_id = $2)
+		AND sm.movement_date >= NOW() - INTERVAL '` + fmt.Sprintf("%d days", days) + `'
+		ORDER BY sm.movement_date DESC
+	`
+	err := r.db.SelectContext(ctx, &movements, query, productID, warehouseID)
+	return movements, err
 }

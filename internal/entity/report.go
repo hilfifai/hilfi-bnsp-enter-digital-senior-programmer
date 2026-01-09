@@ -9,20 +9,20 @@ import (
 )
 
 type StockReport struct {
-	ProductID      uuid.UUID       `json:"product_id"`
-	ProductSKU     string          `json:"product_sku"`
-	ProductName    string          `json:"product_name"`
-	CategoryName   string          `json:"category_name"`
-	WarehouseName  string          `json:"warehouse_name"`
-	LocationCode   *string         `json:"location_code,omitempty"`
-	CurrentStock   int             `json:"current_stock"`
-	ReservedStock  int             `json:"reserved_stock"`
-	AvailableStock int             `json:"available_stock"`
-	MinStock       int             `json:"min_stock"`
-	MaxStock       int             `json:"max_stock"`
-	UnitPrice      decimal.Decimal `json:"unit_price"`
-	TotalValue     decimal.Decimal `json:"total_value"`
-	LastMovement   *time.Time      `json:"last_movement,omitempty"`
+	ProductID      uuid.UUID       `db:"product_id" json:"product_id"`
+	ProductSKU     string          `db:"product_sku" json:"product_sku"`
+	ProductName    string          `db:"product_name" json:"product_name"`
+	CategoryName   string          `db:"category_name" json:"category_name"`
+	WarehouseName  string          `db:"warehouse_name" json:"warehouse_name"`
+	LocationCode   *string         `db:"location_code" json:"location_code,omitempty"`
+	CurrentStock   int             `db:"current_stock" json:"current_stock"`
+	ReservedStock  int             `db:"reserved_stock" json:"reserved_stock"`
+	AvailableStock int             `db:"available_stock" json:"available_stock"`
+	MinStock       int             `db:"min_stock" json:"min_stock"`
+	MaxStock       int             `db:"max_stock" json:"max_stock"`
+	UnitPrice      decimal.Decimal `db:"unit_price" json:"unit_price"`
+	TotalValue     decimal.Decimal `db:"total_value" json:"total_value"`
+	LastMovement   *time.Time      `db:"last_movement" json:"last_movement,omitempty"`
 }
 
 type SalesReport struct {
@@ -39,12 +39,12 @@ type SalesReport struct {
 }
 
 type InventoryValuation struct {
-	WarehouseID   uuid.UUID       `json:"warehouse_id"`
-	WarehouseName string          `json:"warehouse_name"`
-	TotalProducts int             `json:"total_products"`
-	TotalQuantity int             `json:"total_quantity"`
-	TotalValue    decimal.Decimal `json:"total_value"`
-	AverageValue  decimal.Decimal `json:"average_value"`
+	WarehouseID   uuid.UUID       `db:"warehouse_id" json:"warehouse_id"`
+	WarehouseName string          `db:"warehouse_name" json:"warehouse_name"`
+	TotalProducts int             `db:"total_products" json:"total_products"`
+	TotalQuantity int             `db:"total_quantity" json:"total_quantity"`
+	TotalValue    decimal.Decimal `db:"total_value" json:"total_value"`
+	AverageValue  decimal.Decimal `db:"average_value" json:"average_value"`
 }
 
 // DashboardSummary represents the dashboard summary data

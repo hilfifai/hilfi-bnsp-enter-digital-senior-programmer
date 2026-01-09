@@ -16,6 +16,7 @@ import (
 	"api-jellyfish/internal/handler/product_stock"
 	"api-jellyfish/internal/handler/purchase_order"
 	"api-jellyfish/internal/handler/query_catalog"
+	"api-jellyfish/internal/handler/report"
 	"api-jellyfish/internal/handler/role"
 	"api-jellyfish/internal/handler/sales_order"
 	"api-jellyfish/internal/handler/supplier"
@@ -154,6 +155,11 @@ func InitRoutes(e *gin.RouterGroup, ctx context.Context, wg *sync.WaitGroup, db 
 	// Monitoring
 	monitoringSvc := service.NewMonitoringService()
 	monitoring.RegisterMonitoringRoutes(e, monitoringSvc)
+
+	// Report
+	reportSvc := service.NewReportService(inventoryRepo, salesOrderRepo, purchaseOrderRepo, productRepo)
+	reportHandler := report.NewHandler(reportSvc)
+	reportHandler.NewRoutes(e, authMiddleware)
 
 	e.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{"status": "healthy"})

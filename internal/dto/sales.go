@@ -23,6 +23,7 @@ type CreateCustomerRequest struct {
 
 type CreateSalesOrderRequest struct {
 	CustomerID           uuid.UUID               `json:"customer_id" validate:"required"`
+	WarehouseID          uuid.UUID               `json:"warehouse_id" validate:"required"`
 	OrderDate            time.Time               `json:"order_date" validate:"required"`
 	ExpectedDeliveryDate *time.Time              `json:"expected_delivery_date,omitempty"`
 	Items                []SalesOrderItemRequest `json:"items" validate:"required,min=1,dive"`

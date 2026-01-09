@@ -101,6 +101,7 @@ func (s *SalesOrderService) CreateSalesOrder(ctx context.Context, req dto.Create
 		ID:                   uuid.New(),
 		SONumber:             soNumber,
 		CustomerID:           req.CustomerID,
+		WarehouseID:          req.WarehouseID,
 		OrderDate:            req.OrderDate,
 		ExpectedDeliveryDate: req.ExpectedDeliveryDate,
 		Status:               "DRAFT",

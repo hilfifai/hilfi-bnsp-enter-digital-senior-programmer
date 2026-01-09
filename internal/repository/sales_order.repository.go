@@ -52,11 +52,11 @@ func NewSalesOrderRepository(db *sqlx.DB) ISalesOrderRepository {
 func (r *SalesOrderRepository) Create(ctx context.Context, order *entity.SalesOrder) error {
 	query := `
 		INSERT INTO sales_orders (
-			id, so_number, customer_id, order_date, expected_delivery_date, status,
+			id, so_number, customer_id, warehouse_id, order_date, expected_delivery_date, status,
 			sub_total, tax_amount, total_amount, notes, approved_by, approved_at,
 			created_by, updated_by, created_at, updated_at
 		) VALUES (
-			:id, :so_number, :customer_id, :order_date, :expected_delivery_date, :status,
+			:id, :so_number, :customer_id, :warehouse_id, :order_date, :expected_delivery_date, :status,
 			:sub_total, :tax_amount, :total_amount, :notes, :approved_by, :approved_at,
 			:created_by, :updated_by, :created_at, :updated_at
 		)`
@@ -215,11 +215,11 @@ func (r *SalesOrderRepository) CreateTx(ctx context.Context, tx interface{}, ord
 	}
 	query := `
 		INSERT INTO sales_orders (
-			id, so_number, customer_id, order_date, expected_delivery_date, status,
+			id, so_number, customer_id, warehouse_id, order_date, expected_delivery_date, status,
 			sub_total, tax_amount, total_amount, notes, approved_by, approved_at,
 			created_by, updated_by, created_at, updated_at
 		) VALUES (
-			:id, :so_number, :customer_id, :order_date, :expected_delivery_date, :status,
+			:id, :so_number, :customer_id, :warehouse_id, :order_date, :expected_delivery_date, :status,
 			:sub_total, :tax_amount, :total_amount, :notes, :approved_by, :approved_at,
 			:created_by, :updated_by, :created_at, :updated_at
 		)`

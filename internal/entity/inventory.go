@@ -61,8 +61,12 @@ type InventoryStock struct {
 	ID                uuid.UUID          `db:"id" json:"id"`
 	ProductID         uuid.UUID          `db:"product_id" json:"product_id"`
 	Product           *Product           `db:"-" json:"product,omitempty"`
+	ProductSKU        string             `db:"product_sku" json:"product_sku,omitempty"`
+	ProductName       string             `db:"product_name" json:"product_name,omitempty"`
 	WarehouseID       uuid.UUID          `db:"warehouse_id" json:"warehouse_id"`
 	Warehouse         *Warehouse         `db:"-" json:"warehouse,omitempty"`
+	WarehouseCode     string             `db:"warehouse_code" json:"warehouse_code,omitempty"`
+	WarehouseName     string             `db:"warehouse_name" json:"warehouse_name,omitempty"`
 	LocationID        *uuid.UUID         `db:"location_id" json:"location_id,omitempty"`
 	Location          *WarehouseLocation `db:"-" json:"location,omitempty"`
 	Quantity          int                `db:"quantity" json:"quantity"`
@@ -82,6 +86,8 @@ type StockMovement struct {
 	MovementType    string          `db:"movement_type" json:"movement_type"`
 	ProductID       uuid.UUID       `db:"product_id" json:"product_id"`
 	Product         *Product        `db:"-" json:"product,omitempty"`
+	ProductSKU      string          `db:"product_sku" json:"product_sku,omitempty"`
+	ProductName     string          `db:"product_name" json:"product_name,omitempty"`
 	FromWarehouseID *uuid.UUID      `db:"from_warehouse_id" json:"from_warehouse_id,omitempty"`
 	FromLocationID  *uuid.UUID      `db:"from_location_id" json:"from_location_id,omitempty"`
 	ToWarehouseID   *uuid.UUID      `db:"to_warehouse_id" json:"to_warehouse_id,omitempty"`

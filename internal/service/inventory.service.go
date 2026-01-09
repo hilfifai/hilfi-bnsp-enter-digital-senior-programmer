@@ -221,6 +221,11 @@ func (s *InventoryService) CreateStockMovement(ctx context.Context, req dto.Stoc
 		return nil, err
 	}
 
+	// Create stock movement record first
+	if err := s.inventoryRepo.CreateStockMovementTx(ctx, tx, movement); err != nil {
+		return nil, fmt.Errorf("%w: %v", errpkg.ErrCreateStockMovement, err)
+	}
+
 	// Update movement status
 	movement.Status = "COMPLETED"
 	if err := s.inventoryRepo.UpdateStockMovement(ctx, tx, movement); err != nil {
@@ -474,6 +479,11 @@ func (s *InventoryService) AdjustStock(ctx context.Context, req dto.StockAdjustm
 		return nil, err
 	}
 
+	// Create stock movement record first
+	if err := s.inventoryRepo.CreateStockMovementTx(ctx, tx, movement); err != nil {
+		return nil, fmt.Errorf("%w: %v", errpkg.ErrCreateStockMovement, err)
+	}
+
 	// Update movement status
 	if err := s.inventoryRepo.UpdateStockMovement(ctx, tx, movement); err != nil {
 		return nil, fmt.Errorf("%w: %v", errpkg.ErrUpdateStockMovement, err)
@@ -510,11 +520,121 @@ func (s *InventoryService) TransferStock(ctx context.Context, req dto.StockTrans
 }
 
 func (s *InventoryService) PerformStockOpname(ctx context.Context, req dto.StockOpnameRequest, userID uuid.UUID) ([]entity.StockMovement, error) {
-	return nil, nil
+	// Validate warehouse exists
+	_, err := s.warehouseRepo.FindByID(ctx, req.WarehouseID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, errpkg.ErrWarehouseNotFound
+		}
+		return nil, fmt.Errorf("%w: %v", errpkg.ErrWarehouseNotFound, err)
+	}
+
+	var movements []entity.StockMovement
+	now := time.Now()
+
+	// Start transaction
+	tx, err := s.inventoryRepo.BeginTx(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", errpkg.ErrBeginTransaction, err)
+	}
+	defer func() {
+		if tx != nil {
+			sqlxTx, _ := tx.(*sqlx.Tx)
+			sqlxTx.Rollback()
+		}
+	}()
+
+	// Process each opname item
+	for _, item := range req.Items {
+		// Validate product exists
+		product, err := s.productRepo.FindByID(ctx, item.ProductID)
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				continue // Skip invalid products
+			}
+			continue
+		}
+
+		// Get current stock for the product in the warehouse
+		stocks, err := s.inventoryRepo.GetStockByWarehouseAndProduct(ctx, req.WarehouseID, item.ProductID)
+		if err != nil && !errors.Is(err, sql.ErrNoRows) {
+			continue
+		}
+
+		systemQty := 0
+		if len(stocks) > 0 {
+			systemQty = stocks[0].Quantity
+		}
+
+		// Calculate variance
+		variance := item.PhysicalQty - systemQty
+
+		// If there's a variance, create a stock movement to adjust
+		if variance != 0 {
+			movement := &entity.StockMovement{
+				ID:              uuid.New(),
+				ReferenceNumber: s.generateMovementReference("OPNAME"),
+				MovementType:    "ADJUSTMENT",
+				ProductID:       item.ProductID,
+				ToWarehouseID:   &req.WarehouseID,
+				ToLocationID:    item.LocationID,
+				Quantity:        systemQty,
+				UnitPrice:       product.CostPrice,
+				TotalValue:      product.CostPrice.Mul(decimal.NewFromInt(int64(systemQty))),
+				Notes:           item.VarianceNotes,
+				Status:          "COMPLETED",
+				MovementDate:    now,
+				CreatedBy:       userID,
+				UpdatedBy:       userID,
+				CreatedAt:       now,
+				UpdatedAt:       now,
+			}
+
+			// Process the adjustment
+			if err := s.processStockAdjustment(ctx, tx, movement, product, userID); err != nil {
+				continue
+			}
+
+			// Create stock movement record
+			if err := s.inventoryRepo.CreateStockMovementTx(ctx, tx, movement); err != nil {
+				continue
+			}
+
+			// Update movement status
+			movement.Status = "COMPLETED"
+			if err := s.inventoryRepo.UpdateStockMovement(ctx, tx, movement); err != nil {
+				continue
+			}
+
+			movements = append(movements, *movement)
+		}
+	}
+
+	// Commit transaction
+	sqlxTx, ok := tx.(*sqlx.Tx)
+	if !ok {
+		return nil, fmt.Errorf("invalid transaction type: %w", errpkg.ErrBeginTransaction)
+	}
+	if err := sqlxTx.Commit(); err != nil {
+		return nil, fmt.Errorf("%w: %v", errpkg.ErrCommitTransaction, err)
+	}
+	tx = nil // Prevent rollback
+
+	return movements, nil
 }
 
 func (s *InventoryService) GetStockMovements(ctx context.Context, filter dto.StockReportFilter) ([]entity.StockMovement, int, error) {
-	return nil, 0, nil
+	movementFilter := dto.MovementReportFilter{
+		WarehouseID:  filter.WarehouseID,
+		ProductID:    filter.ProductID,
+		StartDate:    filter.StartDate,
+		EndDate:      filter.EndDate,
+		MovementType: filter.MovementType,
+		Limit:        filter.Limit,
+		Offset:       filter.Offset,
+	}
+
+	return s.inventoryRepo.GetMovementReport(ctx, movementFilter)
 }
 
 func (s *InventoryService) GetStockByProduct(ctx context.Context, productID uuid.UUID) ([]entity.InventoryStock, error) {
@@ -522,19 +642,125 @@ func (s *InventoryService) GetStockByProduct(ctx context.Context, productID uuid
 }
 
 func (s *InventoryService) GetStockByWarehouse(ctx context.Context, warehouseID uuid.UUID) ([]entity.InventoryStock, error) {
-	return nil, nil
+	// Validate warehouse exists
+	_, err := s.warehouseRepo.FindByID(ctx, warehouseID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, errpkg.ErrWarehouseNotFound
+		}
+		return nil, fmt.Errorf("%w: %v", errpkg.ErrWarehouseNotFound, err)
+	}
+
+	return s.inventoryRepo.GetStockByWarehouse(ctx, warehouseID)
 }
 
 func (s *InventoryService) GetStockSummary(ctx context.Context) (*entity.StockSummary, error) {
-	return nil, nil
+	// Get total products
+	totalProducts, err := s.inventoryRepo.GetTotalProducts(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get total products: %w", err)
+	}
+
+	// Get total items (sum of all inventory)
+	valuations, err := s.inventoryRepo.GetInventoryValuation(ctx, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get inventory valuation: %w", err)
+	}
+
+	totalItems := 0
+	var totalValue decimal.Decimal
+	for _, v := range valuations {
+		totalItems += v.TotalQuantity
+		totalValue = totalValue.Add(v.TotalValue)
+	}
+
+	// Get low stock count
+	lowStockCount, err := s.inventoryRepo.GetLowStockCount(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get low stock count: %w", err)
+	}
+
+	// Get out of stock count
+	outOfStockCount, err := s.inventoryRepo.GetOutOfStockCount(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get out of stock count: %w", err)
+	}
+
+	// Get pending movements count
+	pendingMovements, err := s.inventoryRepo.GetPendingMovementsCount(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get pending movements count: %w", err)
+	}
+
+	return &entity.StockSummary{
+		TotalProducts:    totalProducts,
+		TotalItems:       totalItems,
+		TotalValue:       totalValue,
+		LowStockCount:    lowStockCount,
+		OutOfStockCount:  outOfStockCount,
+		PendingMovements: pendingMovements,
+	}, nil
 }
 
 func (s *InventoryService) GetLowStockAlerts(ctx context.Context) ([]entity.StockAlert, error) {
-	return nil, nil
+	// Get low stock report
+	reports, err := s.inventoryRepo.GetLowStockReport(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get low stock report: %w", err)
+	}
+
+	var alerts []entity.StockAlert
+	for _, report := range reports {
+		// Get product details
+		product, err := s.productRepo.FindByID(ctx, report.ProductID)
+		if err != nil {
+			continue
+		}
+
+		alertType := "LOW_STOCK"
+		if report.CurrentStock == 0 {
+			alertType = "OUT_OF_STOCK"
+		}
+
+		message := fmt.Sprintf("Product %s has low stock: %d units (min: %d)",
+			product.Name, report.CurrentStock, report.MinStock)
+
+		alerts = append(alerts, entity.StockAlert{
+			ID:           uuid.New(),
+			ProductID:    report.ProductID,
+			Product:      product,
+			AlertType:    alertType,
+			CurrentStock: report.CurrentStock,
+			Threshold:    report.MinStock,
+			Message:      message,
+			IsRead:       false,
+			CreatedAt:    time.Now(),
+		})
+	}
+
+	return alerts, nil
 }
 
 func (s *InventoryService) GetStockHistory(ctx context.Context, productID uuid.UUID, warehouseID uuid.UUID, days int) ([]entity.StockMovement, error) {
-	return nil, nil
+	// Validate product exists
+	_, err := s.productRepo.FindByID(ctx, productID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, errpkg.ErrProductNotFound
+		}
+		return nil, fmt.Errorf("%w: %v", errpkg.ErrProductNotFound, err)
+	}
+
+	// Validate warehouse exists
+	_, err = s.warehouseRepo.FindByID(ctx, warehouseID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, errpkg.ErrWarehouseNotFound
+		}
+		return nil, fmt.Errorf("%w: %v", errpkg.ErrWarehouseNotFound, err)
+	}
+
+	return s.inventoryRepo.GetProductStockHistory(ctx, productID, warehouseID, days)
 }
 
 func (s *InventoryService) generateMovementReference(movementType string) string {
