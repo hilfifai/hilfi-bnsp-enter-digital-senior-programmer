@@ -1,0 +1,1322 @@
+{
+	"info": {
+		"_postman_id": "inventory-system-api-collection-3",
+		"name": "Inventory System API - Part 3 (Supplier, Customer, Delivery, Goods Receipt, Sales Order)",
+		"description": "Postman collection for Supplier, Customer, Delivery Order, Goods Receipt, and Sales Order endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "supplierId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "customerId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "deliveryOrderId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "goodsReceiptId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "salesOrderId",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"item": [
+		{
+			"name": "Suppliers",
+			"item": [
+				{
+					"name": "Create Supplier",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"SUP-001\",\n    \"name\": \"Tech Supplies Inc\",\n    \"contact_name\": \"John Smith\",\n    \"email\": \"john@techsupplies.com\",\n    \"phone\": \"+62-21-98765432\",\n    \"address\": \"456 Tech Street\",\n    \"city\": \"Jakarta\",\n    \"province\": \"DKI Jakarta\",\n    \"postal_code\": \"12340\",\n    \"country\": \"Indonesia\",\n    \"payment_terms\": \"NET30\",\n    \"lead_time_days\": 7,\n    \"is_active\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/supplier",
+							"host": ["{{baseUrl}}"],
+							"path": ["supplier"]
+						},
+						"description": "Create a new supplier"
+					},
+					"response": [
+						{
+							"name": "Create Supplier Success - UAT Example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"SUP-001\",\n    \"name\": \"Tech Supplies Inc\",\n    \"email\": \"john@techsupplies.com\",\n    \"phone\": \"+62-21-98765432\",\n    \"is_active\": true\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/supplier",
+									"host": ["{{baseUrl}}"],
+									"path": ["supplier"]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Supplier created successfully\",\n    \"data\": {\n        \"id\": \"770e8400-e29b-41d4-a716-446655440001\",\n        \"code\": \"SUP-001\",\n        \"name\": \"Tech Supplies Inc\",\n        \"email\": \"john@techsupplies.com\",\n        \"phone\": \"+62-21-98765432\",\n        \"is_active\": true,\n        \"created_at\": \"2025-01-08T10:00:00Z\",\n        \"updated_at\": \"2025-01-08T10:00:00Z\"\n    }\n}"
+						},
+						{
+							"name": "Validation Error - Invalid Email - Unit Test",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"SUP-001\",\n    \"name\": \"Tech Supplies Inc\",\n    \"email\": \"invalid-email\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/supplier",
+									"host": ["{{baseUrl}}"],
+									"path": ["supplier"]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Validation failed\",\n    \"errors\": {\n        \"email\": \"Invalid email format\"\n    }\n}"
+						},
+						{
+							"name": "Supplier Code Already Exists - Unit Test",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"SUP-001\",\n    \"name\": \"Duplicate Supplier\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/supplier",
+									"host": ["{{baseUrl}}"],
+									"path": ["supplier"]
+								}
+							},
+							"status": "Conflict",
+							"code": 409,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Supplier code already exists\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Suppliers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/supplier?active_only=true",
+							"host": ["{{baseUrl}}"],
+							"path": ["supplier"],
+							"query": [
+								{
+									"key": "active_only",
+									"value": "true"
+								}
+							]
+						},
+						"description": "Get all suppliers"
+					},
+					"response": [
+						{
+							"name": "Get Suppliers Success - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/supplier",
+									"host": ["{{baseUrl}}"],
+									"path": ["supplier"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Suppliers retrieved successfully\",\n    \"data\": [\n        {\n            \"id\": \"770e8400-e29b-41d4-a716-446655440001\",\n            \"code\": \"SUP-001\",\n            \"name\": \"Tech Supplies Inc\",\n            \"email\": \"john@techsupplies.com\",\n            \"city\": \"Jakarta\",\n            \"is_active\": true\n        },\n        {\n            \"id\": \"770e8400-e29b-41d4-a716-446655440002\",\n            \"code\": \"SUP-002\",\n            \"name\": \"Office Essentials Ltd\",\n            \"email\": \"sales@officeessentials.com\",\n            \"city\": \"Surabaya\",\n            \"is_active\": true\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Supplier by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/supplier/{{supplierId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["supplier", "{{supplierId}}"]
+						},
+						"description": "Get supplier details by ID"
+					},
+					"response": [
+						{
+							"name": "Get Supplier Success - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/supplier/{{supplierId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["supplier", "{{supplierId}}"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Supplier retrieved successfully\",\n    \"data\": {\n        \"id\": \"770e8400-e29b-41d4-a716-446655440001\",\n        \"code\": \"SUP-001\",\n        \"name\": \"Tech Supplies Inc\",\n        \"contact_name\": \"John Smith\",\n        \"email\": \"john@techsupplies.com\",\n        \"phone\": \"+62-21-98765432\",\n        \"address\": \"456 Tech Street\",\n        \"city\": \"Jakarta\",\n        \"payment_terms\": \"NET30\",\n        \"lead_time_days\": 7,\n        \"is_active\": true,\n        \"created_at\": \"2025-01-08T10:00:00Z\",\n        \"updated_at\": \"2025-01-08T10:00:00Z\"\n    }\n}"
+						},
+						{
+							"name": "Supplier Not Found - Unit Test",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/supplier/00000000-0000-0000-0000-000000000000",
+									"host": ["{{baseUrl}}"],
+									"path": ["supplier", "00000000-0000-0000-0000-000000000000"]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Supplier not found\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Supplier",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Tech Supplies Inc (Updated)\",\n    \"contact_name\": \"Jane Smith\",\n    \"email\": \"jane@techsupplies.com\",\n    \"lead_time_days\": 5,\n    \"is_active\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/supplier/{{supplierId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["supplier", "{{supplierId}}"]
+						},
+						"description": "Update supplier details"
+					},
+					"response": [
+						{
+							"name": "Update Supplier Success - UAT Example",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Tech Supplies Inc (Updated)\",\n    \"contact_name\": \"Jane Smith\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/supplier/{{supplierId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["supplier", "{{supplierId}}"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Supplier updated successfully\",\n    \"data\": {\n        \"id\": \"770e8400-e29b-41d4-a716-446655440001\",\n        \"code\": \"SUP-001\",\n        \"name\": \"Tech Supplies Inc (Updated)\",\n        \"updated_at\": \"2025-01-08T11:00:00Z\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Supplier",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/supplier/{{supplierId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["supplier", "{{supplierId}}"]
+						},
+						"description": "Delete a supplier (soft delete)"
+					},
+					"response": [
+						{
+							"name": "Delete Supplier Success - UAT Example",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/supplier/{{supplierId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["supplier", "{{supplierId}}"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Supplier deleted successfully\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Customers",
+			"item": [
+				{
+					"name": "Create Customer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"CUST-001\",\n    \"name\": \"PT ABC Indonesia\",\n    \"contact_name\": \"Ahmad Budi\",\n    \"email\": \"ahmad@abc-indonesia.com\",\n    \"phone\": \"+62-21-55555555\",\n    \"address\": \"789 Business Park\",\n    \"city\": \"Jakarta\",\n    \"province\": \"DKI Jakarta\",\n    \"postal_code\": \"10220\",\n    \"country\": \"Indonesia\",\n    \"tax_id\": \"01.234.567.8-901.000\",\n    \"payment_terms\": \"NET45\",\n    \"credit_limit\": 50000000,\n    \"is_active\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/customers",
+							"host": ["{{baseUrl}}"],
+							"path": ["customers"]
+						},
+						"description": "Create a new customer"
+					},
+					"response": [
+						{
+							"name": "Create Customer Success - UAT Example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"CUST-001\",\n    \"name\": \"PT ABC Indonesia\",\n    \"email\": \"ahmad@abc-indonesia.com\",\n    \"phone\": \"+62-21-55555555\",\n    \"is_active\": true\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/customers",
+									"host": ["{{baseUrl}}"],
+									"path": ["customers"]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Customer created successfully\",\n    \"data\": {\n        \"id\": \"880e8400-e29b-41d4-a716-446655440001\",\n        \"code\": \"CUST-001\",\n        \"name\": \"PT ABC Indonesia\",\n        \"email\": \"ahmad@abc-indonesia.com\",\n        \"phone\": \"+62-21-55555555\",\n        \"is_active\": true,\n        \"created_at\": \"2025-01-08T10:00:00Z\",\n        \"updated_at\": \"2025-01-08T10:00:00Z\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Customers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/customers?active_only=true",
+							"host": ["{{baseUrl}}"],
+							"path": ["customers"],
+							"query": [
+								{
+									"key": "active_only",
+									"value": "true"
+								}
+							]
+						},
+						"description": "Get all customers"
+					},
+					"response": [
+						{
+							"name": "Get Customers Success - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/customers",
+									"host": ["{{baseUrl}}"],
+									"path": ["customers"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Customers retrieved successfully\",\n    \"data\": [\n        {\n            \"id\": \"880e8400-e29b-41d4-a716-446655440001\",\n            \"code\": \"CUST-001\",\n            \"name\": \"PT ABC Indonesia\",\n            \"email\": \"ahmad@abc-indonesia.com\",\n            \"city\": \"Jakarta\",\n            \"is_active\": true\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Customer by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/customers/{{customerId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["customers", "{{customerId}}"]
+						},
+						"description": "Get customer details by ID"
+					},
+					"response": [
+						{
+							"name": "Get Customer Success - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/customers/{{customerId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["customers", "{{customerId}}"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Customer retrieved successfully\",\n    \"data\": {\n        \"id\": \"880e8400-e29b-41d4-a716-446655440001\",\n        \"code\": \"CUST-001\",\n        \"name\": \"PT ABC Indonesia\",\n        \"contact_name\": \"Ahmad Budi\",\n        \"email\": \"ahmad@abc-indonesia.com\",\n        \"phone\": \"+62-21-55555555\",\n        \"address\": \"789 Business Park\",\n        \"city\": \"Jakarta\",\n        \"payment_terms\": \"NET45\",\n        \"credit_limit\": \"50000000.00\",\n        \"is_active\": true\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Customer",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"PT ABC Indonesia (Updated)\",\n    \"contact_name\": \"Budi Santoso\",\n    \"credit_limit\": 75000000,\n    \"is_active\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/customers/{{customerId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["customers", "{{customerId}}"]
+						},
+						"description": "Update customer details"
+					},
+					"response": [
+						{
+							"name": "Update Customer Success - UAT Example",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"PT ABC Indonesia (Updated)\",\n    \"credit_limit\": 75000000\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/customers/{{customerId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["customers", "{{customerId}}"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Customer updated successfully\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Customer",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/customers/{{customerId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["customers", "{{customerId}}"]
+						},
+						"description": "Delete a customer (soft delete)"
+					},
+					"response": [
+						{
+							"name": "Delete Customer Success - UAT Example",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/customers/{{customerId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["customers", "{{customerId}}"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Customer deleted successfully\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Delivery Orders",
+			"item": [
+				{
+					"name": "Create Delivery Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"sales_order_id\": \"990e8400-e29b-41d4-a716-446655440001\",\n    \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n    \"delivery_date\": \"2025-01-10T10:00:00Z\",\n    \"items\": [\n        {\n            \"sales_order_item_id\": \"aa0e8400-e29b-41d4-a716-446655440001\",\n            \"delivered_qty\": 5\n        }\n    ],\n    \"notes\": \"Handle with care\",\n    \"shipping_method\": \"EXPRESS\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/delivery-orders",
+							"host": ["{{baseUrl}}"],
+							"path": ["delivery-orders"]
+						},
+						"description": "Create a new delivery order"
+					},
+					"response": [
+						{
+							"name": "Create Delivery Order Success - UAT Example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"sales_order_id\": \"990e8400-e29b-41d4-a716-446655440001\",\n    \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n    \"items\": [\n        {\n            \"sales_order_item_id\": \"aa0e8400-e29b-41d4-a716-446655440001\",\n            \"delivered_qty\": 5\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/delivery-orders",
+									"host": ["{{baseUrl}}"],
+									"path": ["delivery-orders"]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Delivery order created successfully\",\n    \"data\": {\n        \"id\": \"bb0e8400-e29b-41d4-a716-446655440001\",\n        \"do_number\": \"DO-2025-0001\",\n        \"sales_order_id\": \"990e8400-e29b-41d4-a716-446655440001\",\n        \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n        \"status\": \"PENDING\",\n        \"items\": [\n            {\n                \"sales_order_item_id\": \"aa0e8400-e29b-41d4-a716-446655440001\",\n                \"ordered_qty\": 10,\n                \"delivered_qty\": 5,\n                \"remaining_qty\": 5\n            }\n        ],\n        \"created_at\": \"2025-01-08T10:00:00Z\"\n    }\n}"
+						},
+						{
+							"name": "Sales Order Not Approved - Unit Test",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"sales_order_id\": \"990e8400-e29b-41d4-a716-446655440002\",\n    \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n    \"items\": [\n        {\n            \"sales_order_item_id\": \"aa0e8400-e29b-41d4-a716-446655440002\",\n            \"delivered_qty\": 5\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/delivery-orders",
+									"host": ["{{baseUrl}}"],
+									"path": ["delivery-orders"]
+								}
+							},
+							"status": "Conflict",
+							"code": 409,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Sales order not approved\",\n    \"errors\": {\n        \"status\": \"Sales order must be approved.\"\n    }\n}"
+						},
+						{
+							"name": "Insufficient Stock - Unit Test",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"sales_order_id\": \"990e8400-e29b-41d4-a716-446655440001\",\n    \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n    \"items\": [\n        {\n            \"sales_order_item_id\": \"aa0e8400-e29b-41d4-a716-446655440001\",\n            \"delivered_qty\": 100\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/delivery-orders",
+									"host": ["{{baseUrl}}"],
+									"path": ["delivery-orders"]
+								}
+							},
+							"status": "Conflict",
+							"code": 409,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Insufficient stock\",\n    \"errors\": {\n        \"stock\": \"Insufficient stock available.\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Delivery Orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/delivery-orders?sales_order_id={{salesOrderId}}&status=PENDING",
+							"host": ["{{baseUrl}}"],
+							"path": ["delivery-orders"],
+							"query": [
+								{
+									"key": "sales_order_id",
+									"value": "{{salesOrderId}}"
+								},
+								{
+									"key": "status",
+									"value": "PENDING"
+								}
+							]
+						},
+						"description": "Get all delivery orders"
+					},
+					"response": [
+						{
+							"name": "Get Delivery Orders Success - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/delivery-orders",
+									"host": ["{{baseUrl}}"],
+									"path": ["delivery-orders"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Delivery orders retrieved successfully\",\n    \"data\": [\n        {\n            \"id\": \"bb0e8400-e29b-41d4-a716-446655440001\",\n            \"do_number\": \"DO-2025-0001\",\n            \"sales_order_id\": \"990e8400-e29b-41d4-a716-446655440001\",\n            \"status\": \"PENDING\",\n            \"delivery_date\": \"2025-01-10T10:00:00Z\",\n            \"created_at\": \"2025-01-08T10:00:00Z\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Delivery Order by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/delivery-orders/{{deliveryOrderId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["delivery-orders", "{{deliveryOrderId}}"]
+						},
+						"description": "Get delivery order details by ID"
+					},
+					"response": [
+						{
+							"name": "Get Delivery Order Success - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/delivery-orders/{{deliveryOrderId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["delivery-orders", "{{deliveryOrderId}}"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Delivery order retrieved successfully\",\n    \"data\": {\n        \"id\": \"bb0e8400-e29b-41d4-a716-446655440001\",\n        \"do_number\": \"DO-2025-0001\",\n        \"sales_order_id\": \"990e8400-e29b-41d4-a716-446655440001\",\n        \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n        \"status\": \"PENDING\",\n        \"delivery_date\": \"2025-01-10T10:00:00Z\",\n        \"shipping_method\": \"EXPRESS\",\n        \"items\": [\n            {\n                \"sales_order_item_id\": \"aa0e8400-e29b-41d4-a716-446655440001\",\n                \"product_name\": \"Laptop Dell Inspiron 15\",\n                \"ordered_qty\": 10,\n                \"delivered_qty\": 5,\n                \"remaining_qty\": 5\n            }\n        ],\n        \"created_at\": \"2025-01-08T10:00:00Z\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Sales Return",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"sales_order_id\": \"990e8400-e29b-41d4-a716-446655440001\",\n    \"delivery_order_id\": \"bb0e8400-e29b-41d4-a716-446655440001\",\n    \"return_date\": \"2025-01-12T10:00:00Z\",\n    \"reason\": \"Product damaged during delivery\",\n    \"items\": [\n        {\n            \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n            \"quantity\": 2,\n            \"reason\": \"Physical damage\"\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/delivery-orders/returns",
+							"host": ["{{baseUrl}}"],
+							"path": ["delivery-orders", "returns"]
+						},
+						"description": "Create a sales return"
+					},
+					"response": [
+						{
+							"name": "Create Sales Return Success - UAT Example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"sales_order_id\": \"990e8400-e29b-41d4-a716-446655440001\",\n    \"delivery_order_id\": \"bb0e8400-e29b-41d4-a716-446655440001\",\n    \"reason\": \"Product damaged\",\n    \"items\": [\n        {\n            \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n            \"quantity\": 2,\n            \"reason\": \"Physical damage\"\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/delivery-orders/returns",
+									"host": ["{{baseUrl}}"],
+									"path": ["delivery-orders", "returns"]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Sales return created successfully\",\n    \"data\": {\n        \"id\": \"cc0e8400-e29b-41d4-a716-446655440001\",\n        \"return_number\": \"SR-2025-0001\",\n        \"sales_order_id\": \"990e8400-e29b-41d4-a716-446655440001\",\n        \"status\": \"COMPLETED\",\n        \"items\": [\n            {\n                \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n                \"quantity\": 2,\n                \"refund_amount\": \"1999.98\"\n            }\n        ],\n        \"created_at\": \"2025-01-12T10:00:00Z\"\n    }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Goods Receipt",
+			"item": [
+				{
+					"name": "Create Goods Receipt",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"purchase_order_id\": \"880e8400-e29b-41d4-a716-446655440001\",\n    \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n    \"receipt_date\": \"2025-01-10T10:00:00Z\",\n    \"items\": [\n        {\n            \"purchase_order_item_id\": \"990e8400-e29b-41d4-a716-446655440001\",\n            \"received_qty\": 50,\n            \"batch_number\": \"BATCH-2025-001\",\n            \"expiry_date\": \"2026-01-10T00:00:00Z\"\n        }\n    ],\n    \"notes\": \"All items in good condition\",\n    \"received_by\": \"Warehouse Staff A\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/goods-receipt",
+							"host": ["{{baseUrl}}"],
+							"path": ["goods-receipt"]
+						},
+						"description": "Create a new goods receipt"
+					},
+					"response": [
+						{
+							"name": "Create Goods Receipt Success - UAT Example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"purchase_order_id\": \"880e8400-e29b-41d4-a716-446655440001\",\n    \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n    \"items\": [\n        {\n            \"purchase_order_item_id\": \"990e8400-e29b-41d4-a716-446655440001\",\n            \"received_qty\": 50,\n            \"batch_number\": \"BATCH-2025-001\"\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/goods-receipt",
+									"host": ["{{baseUrl}}"],
+									"path": ["goods-receipt"]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"GoodsReceipt\",\n    \"data\": {\n        \"id\": \"dd0e8400-e29b-41d4-a716-446655440001\",\n        \"receipt_number\": \"GR-2025-0001\",\n        \"purchase_order_id\": \"880e8400-e29b-41d4-a716-446655440001\",\n        \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n        \"status\": \"COMPLETED\",\n        \"items\": [\n            {\n                \"purchase_order_item_id\": \"990e8400-e29b-41d4-a716-446655440001\",\n                \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n                \"product_name\": \"Laptop Dell Inspiron 15\",\n                \"ordered_qty\": 50,\n                \"received_qty\": 50,\n                \"batch_number\": \"BATCH-2025-001\"\n            }\n        ],\n        \"created_at\": \"2025-01-10T10:00:00Z\"\n    }\n}"
+						},
+						{
+							"name": "Validation Error - Missing Items - Unit Test",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"purchase_order_id\": \"880e8400-e29b-41d4-a716-446655440001\",\n    \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n    \"items\": []\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/goods-receipt",
+									"host": ["{{baseUrl}}"],
+									"path": ["goods-receipt"]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Validation failed\",\n    \"errors\": {\n        \"items\": \"At least one item is required\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Goods Receipt by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/goods-receipt/{{goodsReceiptId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["goods-receipt", "{{goodsReceiptId}}"]
+						},
+						"description": "Get goods receipt details by ID"
+					},
+					"response": [
+						{
+							"name": "Get Goods Receipt Success - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/goods-receipt/{{goodsReceiptId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["goods-receipt", "{{goodsReceiptId}}"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Success get goods receipt by ID\",\n    \"data\": {\n        \"id\": \"dd0e8400-e29b-41d4-a716-446655440001\",\n        \"receipt_number\": \"GR-2025-0001\",\n        \"purchase_order_id\": \"880e8400-e29b-41d4-a716-446655440001\",\n        \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n        \"status\": \"COMPLETED\",\n        \"receipt_date\": \"2025-01-10T10:00:00Z\",\n        \"received_by\": \"Warehouse Staff A\",\n        \"items\": [\n            {\n                \"purchase_order_item_id\": \"990e8400-e29b-41d4-a716-446655440001\",\n                \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n                \"product_name\": \"Laptop Dell Inspiron 15\",\n                \"ordered_qty\": 50,\n                \"received_qty\": 50,\n                \"batch_number\": \"BATCH-2025-001\"\n            }\n        ],\n        \"created_at\": \"2025-01-10T10:00:00Z\"\n    }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Sales Orders",
+			"item": [
+				{
+					"name": "Create Sales Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"customer_id\": \"880e8400-e29b-41d4-a716-446655440001\",\n    \"order_date\": \"2025-01-08T10:00:00Z\",\n    \"expected_delivery_date\": \"2025-01-15T10:00:00Z\",\n    \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n    \"items\": [\n        {\n            \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n            \"quantity\": 10,\n            \"unit_price\": 999.99,\n            \"discount_percent\": 5\n        }\n    ],\n    \"notes\": \"Urgent order\",\n    \"shipping_method\": \"EXPRESS\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/sales-orders",
+							"host": ["{{baseUrl}}"],
+							"path": ["sales-orders"]
+						},
+						"description": "Create a new sales order"
+					},
+					"response": [
+						{
+							"name": "Create Sales Order Success - UAT Example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"customer_id\": \"880e8400-e29b-41d4-a716-446655440001\",\n    \"order_date\": \"2025-01-08T10:00:00Z\",\n    \"items\": [\n        {\n            \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n            \"quantity\": 10,\n            \"unit_price\": 999.99\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/sales-orders",
+									"host": ["{{baseUrl}}"],
+									"path": ["sales-orders"]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Sales order created successfully\",\n    \"data\": {\n        \"id\": \"990e8400-e29b-41d4-a716-446655440001\",\n        \"order_number\": \"SO-2025-0001\",\n        \"customer_id\": \"880e8400-e29b-41d4-a716-446655440001\",\n        \"customer_name\": \"PT ABC Indonesia\",\n        \"status\": \"PENDING\",\n        \"order_date\": \"2025-01-08T10:00:00Z\",\n        \"total_amount\": \"9999.90\",\n        \"items\": [\n            {\n                \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n                \"product_name\": \"Laptop Dell Inspiron 15\",\n                \"quantity\": 10,\n                \"unit_price\": \"999.99\",\n                \"subtotal\": \"9999.90\"\n            }\n        ],\n        \"created_at\": \"2025-01-08T10:00:00Z\",\n        \"updated_at\": \"2025-01-08T10:00:00Z\"\n    }\n}"
+						},
+						{
+							"name": "Validation Error - Empty Items - Unit Test",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"customer_id\": \"880e8400-e29b-41d4-a716-446655440001\",\n    \"order_date\": \"2025-01-08T10:00:00Z\",\n    \"items\": []\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/sales-orders",
+									"host": ["{{baseUrl}}"],
+									"path": ["sales-orders"]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Validation failed\",\n    \"errors\": {\n        \"items\": \"At least one item is required\"\n    }\n}"
+						},
+						{
+							"name": "Customer Not Found - Unit Test",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"customer_id\": \"00000000-0000-0000-0000-000000000000\",\n    \"order_date\": \"2025-01-08T10:00:00Z\",\n    \"items\": [\n        {\n            \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n            \"quantity\": 10,\n            \"unit_price\": 999.99\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/sales-orders",
+									"host": ["{{baseUrl}}"],
+									"path": ["sales-orders"]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Customer not found\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Sales Orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/sales-orders?page=1&limit=10&status=PENDING",
+							"host": ["{{baseUrl}}"],
+							"path": ["sales-orders"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "status",
+									"value": "PENDING"
+								}
+							]
+						},
+						"description": "Get all sales orders with pagination"
+					},
+					"response": [
+						{
+							"name": "Get Sales Orders Success - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/sales-orders",
+									"host": ["{{baseUrl}}"],
+									"path": ["sales-orders"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Sales orders retrieved successfully\",\n    \"data\": {\n        \"data\": [\n            {\n                \"id\": \"990e8400-e29b-41d4-a716-446655440001\",\n                \"order_number\": \"SO-2025-0001\",\n                \"customer_name\": \"PT ABC Indonesia\",\n                \"status\": \"PENDING\",\n                \"total_amount\": \"9999.90\",\n                \"order_date\": \"2025-01-08T10:00:00Z\"\n            }\n        ],\n        \"total\": 1\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Sales Order by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/sales-orders/{{salesOrderId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["sales-orders", "{{salesOrderId}}"]
+						},
+						"description": "Get sales order details by ID"
+					},
+					"response": [
+						{
+							"name": "Get Sales Order Success - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/sales-orders/{{salesOrderId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["sales-orders", "{{salesOrderId}}"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Sales order retrieved successfully\",\n    \"data\": {\n        \"id\": \"990e8400-e29b-41d4-a716-446655440001\",\n        \"order_number\": \"SO-2025-0001\",\n        \"customer_id\": \"880e8400-e29b-41d4-a716-446655440001\",\n        \"customer_name\": \"PT ABC Indonesia\",\n        \"status\": \"PENDING\",\n        \"order_date\": \"2025-01-08T10:00:00Z\",\n        \"expected_delivery_date\": \"2025-01-15T10:00:00Z\",\n        \"total_amount\": \"9999.90\",\n        \"items\": [\n            {\n                \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n                \"product_name\": \"Laptop Dell Inspiron 15\",\n                \"quantity\": 10,\n                \"unit_price\": \"999.99\",\n                \"subtotal\": \"9999.90\"\n            }\n        ],\n        \"created_at\": \"2025-01-08T10:00:00Z\",\n        \"updated_at\": \"2025-01-08T10:00:00Z\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Approve Sales Order",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/sales-orders/{{salesOrderId}}/approve",
+							"host": ["{{baseUrl}}"],
+							"path": ["sales-orders", "{{salesOrderId}}", "approve"]
+						},
+						"description": "Approve a sales order"
+					},
+					"response": [
+						{
+							"name": "Approve Sales Order Success - UAT Example",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/sales-orders/{{salesOrderId}}/approve",
+									"host": ["{{baseUrl}}"],
+									"path": ["sales-orders", "{{salesOrderId}}", "approve"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Sales order approved successfully\",\n    \"data\": {\n        \"id\": \"990e8400-e29b-41d4-a716-446655440001\",\n        \"order_number\": \"SO-2025-0001\",\n        \"status\": \"APPROVED\",\n        \"approved_by\": \"admin@example.com\",\n        \"approved_at\": \"2025-01-08T11:00:00Z\"\n    }\n}"
+						},
+						{
+							"name": "Cannot Approve Already Approved Order - Unit Test",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/sales-orders/{{salesOrderId}}/approve",
+									"host": ["{{baseUrl}}"],
+									"path": ["sales-orders", "{{salesOrderId}}", "approve"]
+								}
+							},
+							"status": "Conflict",
+							"code": 409,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Sales order cannot be approved\",\n    \"errors\": {\n        \"status\": \"Only pending orders can be approved.\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Cancel Sales Order",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/sales-orders/{{salesOrderId}}/cancel",
+							"host": ["{{baseUrl}}"],
+							"path": ["sales-orders", "{{salesOrderId}}", "cancel"]
+						},
+						"description": "Cancel a sales order"
+					},
+					"response": [
+						{
+							"name": "Cancel Sales Order Success - UAT Example",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/sales-orders/{{salesOrderId}}/cancel",
+									"host": ["{{baseUrl}}"],
+									"path": ["sales-orders", "{{salesOrderId}}", "cancel"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Sales order cancelled successfully\",\n    \"data\": {\n        \"id\": \"990e8400-e29b-41d4-a716-446655440001\",\n        \"order_number\": \"SO-2025-0001\",\n        \"status\": \"CANCELLED\",\n        \"cancelled_by\": \"admin@example.com\",\n        \"cancelled_at\": \"2025-01-08T11:00:00Z\"\n    }\n}"
+						},
+						{
+							"name": "Cannot Cancel Completed Order - Unit Test",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/sales-orders/{{salesOrderId}}/cancel",
+									"host": ["{{baseUrl}}"],
+									"path": ["sales-orders", "{{salesOrderId}}", "cancel"]
+								}
+							},
+							"status": "Conflict",
+							"code": 409,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Sales order cannot be cancelled\",\n    \"errors\": {\n        \"status\": \"Only pending or approved orders can be cancelled.\"\n    }\n}"
+						}
+					]
+				}
+			]
+		}
+	]
+}

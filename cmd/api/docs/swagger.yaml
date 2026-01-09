@@ -1,0 +1,3788 @@
+basePath: /api
+definitions:
+  dto.ActivityLogResponse:
+    properties:
+      action:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      metadata:
+        type: string
+      module:
+        type: string
+      user_id:
+        type: string
+      user_name:
+        type: string
+    type: object
+  dto.BulkUpdateStockRequest:
+    properties:
+      location_id:
+        type: string
+      notes:
+        type: string
+      product_id:
+        type: string
+      quantity:
+        minimum: 0
+        type: integer
+      reason:
+        type: string
+      type:
+        enum:
+        - INCREMENT
+        - DECREMENT
+        - SET
+        type: string
+      warehouse_id:
+        type: string
+    required:
+    - product_id
+    - quantity
+    - reason
+    - type
+    - warehouse_id
+    type: object
+  dto.ComponentHealthDTO:
+    properties:
+      last_check:
+        type: string
+      latency_ms:
+        type: integer
+      message:
+        type: string
+      name:
+        type: string
+      status:
+        type: string
+    type: object
+  dto.CreateCustomerRequest:
+    properties:
+      address:
+        type: string
+      code:
+        maxLength: 50
+        minLength: 3
+        type: string
+      contact_person:
+        type: string
+      credit_limit:
+        type: number
+      email:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        maxLength: 200
+        minLength: 3
+        type: string
+      payment_terms:
+        type: string
+      phone:
+        type: string
+      tax_number:
+        type: string
+    required:
+    - code
+    - name
+    type: object
+  dto.CreateDeliveryOrderRequest:
+    properties:
+      delivery_date:
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/dto.DeliveryOrderItemRequest'
+        minItems: 1
+        type: array
+      notes:
+        type: string
+      sales_order_id:
+        type: string
+      warehouse_id:
+        type: string
+    required:
+    - delivery_date
+    - items
+    - sales_order_id
+    - warehouse_id
+    type: object
+  dto.CreateProductCategoryRequest:
+    properties:
+      code:
+        maxLength: 50
+        minLength: 2
+        type: string
+      description:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        maxLength: 200
+        minLength: 2
+        type: string
+      parent_category_id:
+        type: string
+    required:
+    - code
+    - name
+    type: object
+  dto.CreateProductRequest:
+    properties:
+      attributes:
+        items:
+          $ref: '#/definitions/dto.ProductAttributeDTO'
+        type: array
+      barcode:
+        type: string
+      category_id:
+        type: string
+      cost_price:
+        minimum: 0
+        type: number
+      description:
+        type: string
+      dimensions:
+        additionalProperties:
+          type: string
+        type: object
+      image_urls:
+        items:
+          type: string
+        type: array
+      is_active:
+        type: boolean
+      max_stock:
+        minimum: 0
+        type: integer
+      min_stock:
+        minimum: 0
+        type: integer
+      name:
+        maxLength: 200
+        minLength: 3
+        type: string
+      sku:
+        maxLength: 100
+        minLength: 3
+        type: string
+      unit_price:
+        minimum: 0
+        type: number
+      weight:
+        type: number
+    required:
+    - category_id
+    - cost_price
+    - name
+    - sku
+    - unit_price
+    type: object
+  dto.CreateProductStockRequest:
+    properties:
+      product_id:
+        type: string
+      quantity:
+        minimum: 0
+        type: integer
+      reorder_level:
+        minimum: 0
+        type: integer
+      warehouse_id:
+        type: string
+    required:
+    - product_id
+    - warehouse_id
+    type: object
+  dto.CreatePurchaseOrderRequest:
+    properties:
+      expected_delivery_date:
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/dto.PurchaseOrderItemRequest'
+        minItems: 1
+        type: array
+      notes:
+        type: string
+      order_date:
+        type: string
+      supplier_id:
+        type: string
+    required:
+    - items
+    - order_date
+    - supplier_id
+    type: object
+  dto.CreateSalesOrderRequest:
+    properties:
+      customer_id:
+        type: string
+      expected_delivery_date:
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/dto.SalesOrderItemRequest'
+        minItems: 1
+        type: array
+      notes:
+        type: string
+      order_date:
+        type: string
+    required:
+    - customer_id
+    - items
+    - order_date
+    type: object
+  dto.CreateSupplierRequest:
+    properties:
+      address:
+        type: string
+      code:
+        maxLength: 50
+        minLength: 3
+        type: string
+      contact_person:
+        type: string
+      email:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        maxLength: 200
+        minLength: 3
+        type: string
+      payment_terms:
+        type: string
+      phone:
+        type: string
+      tax_number:
+        type: string
+    required:
+    - code
+    - name
+    type: object
+  dto.CreateWarehouseLocationRequest:
+    properties:
+      aisle:
+        type: string
+      bin:
+        type: string
+      capacity:
+        type: integer
+      code:
+        maxLength: 50
+        minLength: 2
+        type: string
+      description:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        maxLength: 100
+        minLength: 3
+        type: string
+      rack:
+        type: string
+      shelf:
+        type: string
+      warehouse_id:
+        type: string
+      zone:
+        type: string
+    required:
+    - code
+    - name
+    - warehouse_id
+    type: object
+  dto.CreateWarehouseRequest:
+    properties:
+      address:
+        type: string
+      code:
+        maxLength: 50
+        minLength: 3
+        type: string
+      contact_person:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        maxLength: 200
+        minLength: 3
+        type: string
+      phone:
+        type: string
+    required:
+    - code
+    - name
+    type: object
+  dto.DeliveryOrderItemRequest:
+    properties:
+      batch_number:
+        type: string
+      delivered_qty:
+        minimum: 1
+        type: integer
+      location_id:
+        type: string
+      notes:
+        type: string
+      sales_order_item_id:
+        type: string
+    required:
+    - delivered_qty
+    - sales_order_item_id
+    type: object
+  dto.EndpointMetricsDTO:
+    properties:
+      avg_latency_ms:
+        type: number
+      endpoint:
+        type: string
+      error_count:
+        type: integer
+      max_latency_ms:
+        type: number
+      method:
+        type: string
+      min_latency_ms:
+        type: number
+      request_count:
+        type: integer
+    type: object
+  dto.GoodsReceiptItemRequest:
+    properties:
+      batch_number:
+        type: string
+      expiry_date:
+        type: string
+      location_id:
+        type: string
+      notes:
+        type: string
+      purchase_order_item_id:
+        type: string
+      received_qty:
+        minimum: 0
+        type: integer
+    required:
+    - purchase_order_item_id
+    - received_qty
+    type: object
+  dto.GoodsReceiptRequest:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/dto.GoodsReceiptItemRequest'
+        minItems: 1
+        type: array
+      notes:
+        type: string
+      purchase_order_id:
+        type: string
+      receipt_date:
+        type: string
+      warehouse_id:
+        type: string
+    required:
+    - items
+    - purchase_order_id
+    - receipt_date
+    - warehouse_id
+    type: object
+  dto.InventoryAlertResponse:
+    properties:
+      created_at:
+        type: string
+      current_qty:
+        type: integer
+      id:
+        type: string
+      is_read:
+        type: boolean
+      message:
+        type: string
+      product_id:
+        type: string
+      product_name:
+        type: string
+      product_sku:
+        type: string
+      resolved_at:
+        type: string
+      severity:
+        type: string
+      threshold:
+        type: integer
+      type:
+        type: string
+      warehouse_id:
+        type: string
+    type: object
+  dto.LoginRequest:
+    properties:
+      password:
+        maxLength: 100
+        minLength: 6
+        type: string
+      username:
+        maxLength: 100
+        minLength: 3
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  dto.MonitoringDashboardResponse:
+    properties:
+      last_updated:
+        type: string
+      recent_activities:
+        items:
+          $ref: '#/definitions/dto.ActivityLogResponse'
+        type: array
+      recent_alerts:
+        items:
+          $ref: '#/definitions/dto.InventoryAlertResponse'
+        type: array
+      service_metrics:
+        $ref: '#/definitions/dto.ServiceMetricsResponse'
+      system_health:
+        $ref: '#/definitions/dto.SystemHealthResponse'
+    type: object
+  dto.ProductAttributeDTO:
+    properties:
+      key:
+        type: string
+      label:
+        type: string
+      value: {}
+    required:
+    - key
+    - value
+    type: object
+  dto.PurchaseOrderItemRequest:
+    properties:
+      notes:
+        type: string
+      product_id:
+        type: string
+      quantity:
+        minimum: 1
+        type: integer
+      unit_price:
+        minimum: 0
+        type: number
+    required:
+    - product_id
+    - quantity
+    - unit_price
+    type: object
+  dto.RefreshTokenRequest:
+    properties:
+      refresh_token:
+        type: string
+    required:
+    - refresh_token
+    type: object
+  dto.ResourceUsageDTO:
+    properties:
+      active_connections:
+        type: integer
+      avg_response_ms:
+        type: number
+      cpu_usage:
+        type: number
+      disk_total_gb:
+        type: number
+      disk_usage:
+        type: number
+      disk_used_gb:
+        type: number
+      memory_total_mb:
+        type: number
+      memory_usage:
+        type: number
+      memory_used_mb:
+        type: number
+      requests_per_sec:
+        type: number
+    type: object
+  dto.SalesOrderItemRequest:
+    properties:
+      notes:
+        type: string
+      product_id:
+        type: string
+      quantity:
+        minimum: 1
+        type: integer
+      unit_price:
+        minimum: 0
+        type: number
+    required:
+    - product_id
+    - quantity
+    - unit_price
+    type: object
+  dto.SalesReturnItemRequest:
+    properties:
+      delivery_order_item_id:
+        type: string
+      notes:
+        type: string
+      reason:
+        type: string
+      returned_qty:
+        minimum: 1
+        type: integer
+    required:
+    - delivery_order_item_id
+    - reason
+    - returned_qty
+    type: object
+  dto.SalesReturnRequest:
+    properties:
+      delivery_order_id:
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/dto.SalesReturnItemRequest'
+        minItems: 1
+        type: array
+      notes:
+        type: string
+      reason:
+        type: string
+      return_date:
+        type: string
+    required:
+    - delivery_order_id
+    - items
+    - reason
+    - return_date
+    type: object
+  dto.ServiceMetricsResponse:
+    properties:
+      active_instances:
+        type: integer
+      avg_latency_ms:
+        type: number
+      endpoints:
+        items:
+          $ref: '#/definitions/dto.EndpointMetricsDTO'
+        type: array
+      error_count:
+        type: integer
+      last_updated:
+        type: string
+      p95_latency_ms:
+        type: number
+      p99_latency_ms:
+        type: number
+      request_count:
+        type: integer
+      service_name:
+        type: string
+      success_rate:
+        type: number
+      throughput_rps:
+        type: number
+    type: object
+  dto.StockAdjustmentRequest:
+    properties:
+      location_id:
+        type: string
+      new_quantity:
+        minimum: 0
+        type: integer
+      notes:
+        type: string
+      product_id:
+        type: string
+      reason:
+        type: string
+      warehouse_id:
+        type: string
+    required:
+    - new_quantity
+    - product_id
+    - reason
+    - warehouse_id
+    type: object
+  dto.StockMovementRequest:
+    properties:
+      batch_number:
+        type: string
+      expiry_date:
+        type: string
+      from_location_id:
+        type: string
+      from_warehouse_id:
+        type: string
+      movement_date:
+        type: string
+      movement_type:
+        enum:
+        - IN
+        - OUT
+        - TRANSFER
+        - ADJUSTMENT
+        - OPNAME
+        type: string
+      notes:
+        type: string
+      product_id:
+        type: string
+      quantity:
+        minimum: 1
+        type: integer
+      to_location_id:
+        type: string
+      to_warehouse_id:
+        type: string
+      unit_price:
+        minimum: 0
+        type: number
+    required:
+    - movement_type
+    - product_id
+    - quantity
+    - unit_price
+    type: object
+  dto.StockOpnameItemRequest:
+    properties:
+      location_id:
+        type: string
+      physical_qty:
+        minimum: 0
+        type: integer
+      product_id:
+        type: string
+      system_qty:
+        type: integer
+      variance:
+        type: integer
+      variance_notes:
+        type: string
+    required:
+    - physical_qty
+    - product_id
+    type: object
+  dto.StockOpnameRequest:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/dto.StockOpnameItemRequest'
+        minItems: 1
+        type: array
+      opname_date:
+        type: string
+      warehouse_id:
+        type: string
+    required:
+    - items
+    - warehouse_id
+    type: object
+  dto.StockTransferRequest:
+    properties:
+      from_location_id:
+        type: string
+      from_warehouse_id:
+        type: string
+      notes:
+        type: string
+      product_id:
+        type: string
+      quantity:
+        minimum: 1
+        type: integer
+      to_location_id:
+        type: string
+      to_warehouse_id:
+        type: string
+    required:
+    - from_warehouse_id
+    - product_id
+    - quantity
+    - to_warehouse_id
+    type: object
+  dto.SystemHealthResponse:
+    properties:
+      components:
+        items:
+          $ref: '#/definitions/dto.ComponentHealthDTO'
+        type: array
+      resource_usage:
+        $ref: '#/definitions/dto.ResourceUsageDTO'
+      status:
+        type: string
+      timestamp:
+        type: string
+      uptime:
+        type: string
+      version:
+        type: string
+    type: object
+  dto.UpdateCustomerRequest:
+    properties:
+      address:
+        type: string
+      code:
+        maxLength: 50
+        minLength: 3
+        type: string
+      contact_person:
+        type: string
+      credit_limit:
+        type: number
+      email:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        maxLength: 200
+        minLength: 3
+        type: string
+      payment_terms:
+        type: string
+      phone:
+        type: string
+      tax_number:
+        type: string
+    required:
+    - code
+    - name
+    type: object
+  dto.UpdateProductCategoryRequest:
+    properties:
+      description:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        maxLength: 200
+        minLength: 2
+        type: string
+      parent_category_id:
+        type: string
+    required:
+    - name
+    type: object
+  dto.UpdateProductRequest:
+    properties:
+      attributes:
+        items:
+          $ref: '#/definitions/dto.ProductAttributeDTO'
+        type: array
+      barcode:
+        type: string
+      category_id:
+        type: string
+      cost_price:
+        minimum: 0
+        type: number
+      description:
+        type: string
+      dimensions:
+        additionalProperties:
+          type: string
+        type: object
+      image_urls:
+        items:
+          type: string
+        type: array
+      is_active:
+        type: boolean
+      max_stock:
+        minimum: 0
+        type: integer
+      min_stock:
+        minimum: 0
+        type: integer
+      name:
+        maxLength: 200
+        minLength: 3
+        type: string
+      unit_price:
+        minimum: 0
+        type: number
+      weight:
+        type: number
+    required:
+    - category_id
+    - cost_price
+    - name
+    - unit_price
+    type: object
+  dto.UpdateSupplierRequest:
+    properties:
+      address:
+        type: string
+      code:
+        maxLength: 50
+        minLength: 3
+        type: string
+      contact_person:
+        type: string
+      email:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        maxLength: 200
+        minLength: 3
+        type: string
+      payment_terms:
+        type: string
+      phone:
+        type: string
+      tax_number:
+        type: string
+    required:
+    - code
+    - name
+    type: object
+  dto.UpdateWarehouseLocationRequest:
+    properties:
+      aisle:
+        type: string
+      bin:
+        type: string
+      capacity:
+        type: integer
+      code:
+        maxLength: 50
+        minLength: 2
+        type: string
+      description:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        maxLength: 100
+        minLength: 3
+        type: string
+      rack:
+        type: string
+      shelf:
+        type: string
+      zone:
+        type: string
+    type: object
+  dto.UpdateWarehouseRequest:
+    properties:
+      address:
+        type: string
+      code:
+        maxLength: 50
+        minLength: 3
+        type: string
+      contact_person:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        maxLength: 200
+        minLength: 3
+        type: string
+      phone:
+        type: string
+    required:
+    - code
+    - name
+    type: object
+  entity.ComponentHealth:
+    properties:
+      last_check:
+        type: string
+      latency_ms:
+        type: integer
+      message:
+        type: string
+      name:
+        type: string
+      status:
+        description: up, down, degraded
+        type: string
+    type: object
+  entity.EndpointMetrics:
+    properties:
+      avg_latency_ms:
+        type: number
+      endpoint:
+        type: string
+      error_count:
+        type: integer
+      max_latency_ms:
+        type: number
+      method:
+        type: string
+      min_latency_ms:
+        type: number
+      request_count:
+        type: integer
+    type: object
+  entity.PerformanceReport:
+    properties:
+      availability:
+        description: percentage
+        type: number
+      avg_latency_ms:
+        type: number
+      end_time:
+        type: string
+      error_rate:
+        type: number
+      generated_at:
+        type: string
+      max_latency_ms:
+        type: number
+      min_latency_ms:
+        type: number
+      period:
+        description: hourly, daily, weekly, monthly
+        type: string
+      report_id:
+        type: string
+      start_time:
+        type: string
+      throughput_rps:
+        type: number
+      total_errors:
+        type: integer
+      total_requests:
+        type: integer
+    type: object
+  entity.ResourceUsage:
+    properties:
+      active_connections:
+        type: integer
+      avg_response_ms:
+        type: number
+      cpu_usage:
+        description: percentage 0-100
+        type: number
+      disk_total_gb:
+        type: number
+      disk_usage:
+        description: percentage 0-100
+        type: number
+      disk_used_gb:
+        type: number
+      memory_total_mb:
+        type: number
+      memory_usage:
+        description: percentage 0-100
+        type: number
+      memory_used_mb:
+        type: number
+      requests_per_sec:
+        type: number
+    type: object
+  entity.ServiceMetrics:
+    properties:
+      active_instances:
+        type: integer
+      avg_latency_ms:
+        type: number
+      endpoint_metrics:
+        items:
+          $ref: '#/definitions/entity.EndpointMetrics'
+        type: array
+      error_count:
+        type: integer
+      last_updated:
+        type: string
+      p95_latency_ms:
+        type: number
+      p99_latency_ms:
+        type: number
+      request_count:
+        type: integer
+      service_name:
+        type: string
+      success_rate:
+        description: percentage
+        type: number
+      throughput_rps:
+        type: number
+    type: object
+  entity.SystemHealth:
+    properties:
+      components:
+        items:
+          $ref: '#/definitions/entity.ComponentHealth'
+        type: array
+      resource_usage:
+        $ref: '#/definitions/entity.ResourceUsage'
+      status:
+        description: healthy, degraded, unhealthy
+        type: string
+      timestamp:
+        type: string
+      uptime:
+        type: string
+      version:
+        type: string
+    type: object
+  role.CreateRoleRequest:
+    properties:
+      active:
+        type: boolean
+      code:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+      roleGroupId:
+        type: string
+    required:
+    - code
+    - name
+    - roleGroupId
+    type: object
+  role.UpdateRoleRequest:
+    properties:
+      active:
+        type: boolean
+      code:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+      roleGroupId:
+        type: string
+    type: object
+  types.ResponseAPI:
+    properties:
+      data: {}
+      debug:
+        $ref: '#/definitions/types.ResponseAPIDebug'
+      message:
+        type: string
+    type: object
+  types.ResponseAPIDebug:
+    properties:
+      endTime:
+        description: ISO8601 format for consistency with StartTime
+        type: string
+      error:
+        type: string
+      requestId:
+        type: string
+      runtimeMs:
+        description: Runtime in milliseconds for better precision
+        type: integer
+      startTime:
+        description: ISO8601 format, e.g., "2025-01-09T15:04:05Z07:00"
+        type: string
+      version:
+        type: string
+    type: object
+host: localhost:9000
+info:
+  contact: {}
+  description: API documentations for the BE.
+  title: General API
+  version: "1.0"
+paths:
+  /api/v1/auth/data:
+    get:
+      consumes:
+      - application/json
+      description: Get User Info
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: User Info
+      tags:
+      - Auth
+  /api/v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Get Access token
+      parameters:
+      - description: Login Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      summary: Auth
+      tags:
+      - Auth
+  /api/v1/auth/refresh-token:
+    post:
+      consumes:
+      - application/json
+      description: Get Refresh token
+      parameters:
+      - description: Refresh Token Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RefreshTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      summary: Refresh Token
+      tags:
+      - Auth
+  /api/v1/customers:
+    get:
+      description: Get all customers with optional active filter
+      parameters:
+      - description: Filter active only
+        in: query
+        name: active_only
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get all customers
+      tags:
+      - Customer
+    post:
+      consumes:
+      - application/json
+      description: Create a new customer
+      parameters:
+      - description: Customer data
+        in: body
+        name: customer
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateCustomerRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Create a new customer
+      tags:
+      - Customer
+  /api/v1/customers/{id}:
+    delete:
+      description: Delete customer by ID (soft delete)
+      parameters:
+      - description: Customer ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Delete customer
+      tags:
+      - Customer
+    get:
+      description: Get customer by ID
+      parameters:
+      - description: Customer ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get customer by ID
+      tags:
+      - Customer
+    put:
+      consumes:
+      - application/json
+      description: Update customer by ID
+      parameters:
+      - description: Customer ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Customer data
+        in: body
+        name: customer
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateCustomerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Update customer
+      tags:
+      - Customer
+  /api/v1/delivery-orders:
+    get:
+      description: Get all delivery orders with optional filters
+      parameters:
+      - description: Filter by sales order ID
+        in: query
+        name: sales_order_id
+        type: string
+      - description: Filter by warehouse ID
+        in: query
+        name: warehouse_id
+        type: string
+      - description: Filter by status
+        in: query
+        name: status
+        type: string
+      - description: Limit results
+        in: query
+        name: limit
+        type: integer
+      - description: Offset results
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get all delivery orders
+      tags:
+      - Delivery Order
+    post:
+      consumes:
+      - application/json
+      description: Create a delivery order for a sales order
+      parameters:
+      - description: Delivery Order data
+        in: body
+        name: delivery_order
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateDeliveryOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Create a delivery order
+      tags:
+      - Delivery Order
+  /api/v1/delivery-orders/{id}:
+    get:
+      description: Get delivery order by ID
+      parameters:
+      - description: Delivery Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get delivery order by ID
+      tags:
+      - Delivery Order
+  /api/v1/delivery-orders/returns:
+    post:
+      consumes:
+      - application/json
+      description: Create a sales return
+      parameters:
+      - description: Sales Return data
+        in: body
+        name: return
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SalesReturnRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Create a sales return
+      tags:
+      - Delivery Order
+  /api/v1/goods-receipt:
+    post:
+      consumes:
+      - application/json
+      description: Membuat goods receipt baru
+      parameters:
+      - description: Goods Receipt
+        in: body
+        name: goods_receipt
+        required: true
+        schema:
+          $ref: '#/definitions/dto.GoodsReceiptRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Create goods receipt
+      tags:
+      - GoodsReceipt
+  /api/v1/goods-receipt/{id}:
+    get:
+      description: Mendapatkan goods receipt berdasarkan ID
+      parameters:
+      - description: Goods Receipt UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get goods receipt by ID
+      tags:
+      - GoodsReceipt
+  /api/v1/inventory/adjustment:
+    post:
+      consumes:
+      - application/json
+      description: Adjust stock quantity to a new value
+      parameters:
+      - description: Stock Adjustment
+        in: body
+        name: adjustment
+        required: true
+        schema:
+          $ref: '#/definitions/dto.StockAdjustmentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Adjust stock quantity
+      tags:
+      - Inventory
+  /api/v1/inventory/alerts/low-stock:
+    get:
+      description: Get products with stock below minimum threshold
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get low stock alerts
+      tags:
+      - Inventory
+  /api/v1/inventory/history/{product_id}:
+    get:
+      description: Get stock movement history for a product
+      parameters:
+      - description: Product UUID
+        in: path
+        name: product_id
+        required: true
+        type: string
+      - description: Warehouse UUID
+        in: query
+        name: warehouse_id
+        type: string
+      - default: 30
+        description: Number of days to look back
+        in: query
+        name: days
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get stock history
+      tags:
+      - Inventory
+  /api/v1/inventory/movements:
+    get:
+      description: Get list of stock movements with filtering
+      parameters:
+      - description: Filter by warehouse ID
+        in: query
+        name: warehouse_id
+        type: string
+      - description: Filter by product ID
+        in: query
+        name: product_id
+        type: string
+      - description: Filter by movement type
+        in: query
+        name: movement_type
+        type: string
+      - description: Filter by start date
+        in: query
+        name: start_date
+        type: string
+      - description: Filter by end date
+        in: query
+        name: end_date
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get stock movements
+      tags:
+      - Inventory
+    post:
+      consumes:
+      - application/json
+      description: Create a new stock movement (IN, OUT, TRANSFER, ADJUSTMENT)
+      parameters:
+      - description: Stock Movement
+        in: body
+        name: movement
+        required: true
+        schema:
+          $ref: '#/definitions/dto.StockMovementRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Create stock movement
+      tags:
+      - Inventory
+  /api/v1/inventory/opname:
+    post:
+      consumes:
+      - application/json
+      description: Perform physical stock count and reconciliation
+      parameters:
+      - description: Stock Opname
+        in: body
+        name: opname
+        required: true
+        schema:
+          $ref: '#/definitions/dto.StockOpnameRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Perform stock opname
+      tags:
+      - Inventory
+  /api/v1/inventory/product/{id}:
+    get:
+      description: Get stock levels for a specific product across warehouses
+      parameters:
+      - description: Product UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get stock by product
+      tags:
+      - Inventory
+  /api/v1/inventory/summary:
+    get:
+      description: Get overall stock summary across all warehouses
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get stock summary
+      tags:
+      - Inventory
+  /api/v1/inventory/transfer:
+    post:
+      consumes:
+      - application/json
+      description: Transfer stock from one warehouse to another
+      parameters:
+      - description: Stock Transfer
+        in: body
+        name: transfer
+        required: true
+        schema:
+          $ref: '#/definitions/dto.StockTransferRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Transfer stock between warehouses
+      tags:
+      - Inventory
+  /api/v1/inventory/warehouse/{id}:
+    get:
+      description: Get stock levels for all products in a specific warehouse
+      parameters:
+      - description: Warehouse UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get stock by warehouse
+      tags:
+      - Inventory
+  /api/v1/location:
+    get:
+      description: get semua data location berdasarkan warehouse ID
+      parameters:
+      - description: Warehouse UUID
+        in: query
+        name: warehouse_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get locations by warehouse
+      tags:
+      - Warehouse Location
+    post:
+      consumes:
+      - application/json
+      description: Membuat warehouse location baru
+      parameters:
+      - description: Warehouse Location
+        in: body
+        name: location
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateWarehouseLocationRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Create warehouse location
+      tags:
+      - Warehouse Location
+  /api/v1/location/{id}:
+    delete:
+      description: Menghapus warehouse location berdasarkan ID
+      parameters:
+      - description: Location UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Delete warehouse location
+      tags:
+      - Warehouse Location
+    get:
+      description: get location berdasarkan ID
+      parameters:
+      - description: Location UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get location by ID
+      tags:
+      - Warehouse Location
+    put:
+      consumes:
+      - application/json
+      description: Mengupdate data warehouse location
+      parameters:
+      - description: Location UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Warehouse Location
+        in: body
+        name: location
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateWarehouseLocationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Update warehouse location
+      tags:
+      - Warehouse Location
+  /api/v1/location/available:
+    get:
+      description: get locations yang tersedia dengan kapasitas yang cukup
+      parameters:
+      - description: Warehouse UUID
+        in: query
+        name: warehouse_id
+        required: true
+        type: string
+      - description: Required Capacity
+        in: query
+        name: required_capacity
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get available locations
+      tags:
+      - Warehouse Location
+  /api/v1/monitoring/alerts:
+    get:
+      description: Get inventory alerts with optional filters
+      parameters:
+      - description: Alert type
+        in: query
+        name: type
+        type: string
+      - description: Alert severity
+        in: query
+        name: severity
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get inventory alerts
+      tags:
+      - monitoring
+  /api/v1/monitoring/alerts/{id}/read:
+    post:
+      consumes:
+      - application/json
+      description: Mark a specific alert as read
+      parameters:
+      - description: Alert ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Mark alert as read
+      tags:
+      - monitoring
+  /api/v1/monitoring/audit-logs:
+    get:
+      description: Get audit logs with optional filters
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        type: string
+      - description: Action type
+        in: query
+        name: action
+        type: string
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get audit logs
+      tags:
+      - monitoring
+  /api/v1/monitoring/dashboard:
+    get:
+      description: Get the complete monitoring dashboard data
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.MonitoringDashboardResponse'
+      summary: Get monitoring dashboard
+      tags:
+      - monitoring
+  /api/v1/monitoring/health:
+    get:
+      description: Get the current health status of the system
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.SystemHealth'
+      summary: Get system health status
+      tags:
+      - monitoring
+  /api/v1/monitoring/metrics:
+    get:
+      description: Get the current metrics of the service
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.ServiceMetrics'
+      summary: Get service metrics
+      tags:
+      - monitoring
+  /api/v1/monitoring/performance:
+    get:
+      description: Get performance report for a specific period
+      parameters:
+      - description: Period (hourly, daily, weekly, monthly)
+        in: query
+        name: period
+        type: string
+      - description: Start date
+        in: query
+        name: start_date
+        type: string
+      - description: End date
+        in: query
+        name: end_date
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.PerformanceReport'
+      summary: Get performance report
+      tags:
+      - monitoring
+  /api/v1/product-categories:
+    get:
+      description: Get list of all product categories
+      parameters:
+      - description: Active only
+        in: query
+        name: active_only
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get all product categories
+      tags:
+      - Product Categories
+    post:
+      consumes:
+      - application/json
+      description: Create a new product category
+      parameters:
+      - description: Category data
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateProductCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Create product category
+      tags:
+      - Product Categories
+  /api/v1/product-categories/{id}:
+    delete:
+      description: Delete a category (soft delete)
+      parameters:
+      - description: Category UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Delete category
+      tags:
+      - Product Categories
+    get:
+      description: Get detailed information about a specific category
+      parameters:
+      - description: Category UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get category by ID
+      tags:
+      - Product Categories
+    put:
+      consumes:
+      - application/json
+      description: Update an existing category
+      parameters:
+      - description: Category UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated category data
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateProductCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Update category
+      tags:
+      - Product Categories
+  /api/v1/product-stocks:
+    get:
+      description: Get stock information for a product in a specific warehouse
+      parameters:
+      - description: Product UUID
+        in: query
+        name: product_id
+        required: true
+        type: string
+      - description: Warehouse UUID
+        in: query
+        name: warehouse_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get product stock
+      tags:
+      - Product Stock
+    post:
+      consumes:
+      - application/json
+      description: Update stock quantity for a product
+      parameters:
+      - description: Stock data
+        in: body
+        name: stock
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateProductStockRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Update product stock
+      tags:
+      - Product Stock
+  /api/v1/product-stocks/low-stock:
+    get:
+      description: Get products with stock below reorder level
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get low stock products
+      tags:
+      - Product Stock
+  /api/v1/product-stocks/movements:
+    get:
+      description: Get stock movement history with filters
+      parameters:
+      - description: Product UUID
+        in: query
+        name: product_id
+        type: string
+      - description: Warehouse UUID
+        in: query
+        name: warehouse_id
+        type: string
+      - description: Movement type
+        in: query
+        name: movement_type
+        type: string
+      - description: Start date (RFC3339)
+        in: query
+        name: start_date
+        type: string
+      - description: End date (RFC3339)
+        in: query
+        name: end_date
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get stock movement history
+      tags:
+      - Product Stock
+  /api/v1/product-stocks/product/{id}:
+    get:
+      description: Get all stock entries for a specific product
+      parameters:
+      - description: Product UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get stock by product
+      tags:
+      - Product Stock
+  /api/v1/product-stocks/warehouse/{id}:
+    get:
+      description: Get all stock entries in a specific warehouse
+      parameters:
+      - description: Warehouse UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get stock by warehouse
+      tags:
+      - Product Stock
+  /api/v1/products:
+    get:
+      description: Get paginated list of products with optional filters
+      parameters:
+      - description: Filter by category ID
+        in: query
+        name: category_id
+        type: string
+      - description: Filter by SKU
+        in: query
+        name: sku
+        type: string
+      - description: Filter by product name
+        in: query
+        name: name
+        type: string
+      - description: Filter by barcode
+        in: query
+        name: barcode
+        type: string
+      - description: Filter by active status
+        in: query
+        name: is_active
+        type: boolean
+      - description: Show only low stock products
+        in: query
+        name: low_stock_only
+        type: boolean
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      - description: Sort field
+        enum:
+        - name
+        - sku
+        - created_at
+        - current_stock
+        - unit_price
+        in: query
+        name: sort_by
+        type: string
+      - default: desc
+        description: Sort order
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort_order
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get list of products with filtering and pagination
+      tags:
+      - Products
+    post:
+      consumes:
+      - application/json
+      description: Create a new product with all required information
+      parameters:
+      - description: Product data
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateProductRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Create a new product
+      tags:
+      - Products
+  /api/v1/products/{id}:
+    delete:
+      description: Soft delete a product (mark as inactive)
+      parameters:
+      - description: Product UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Delete a product
+      tags:
+      - Products
+    get:
+      description: Get detailed information about a specific product
+      parameters:
+      - description: Product UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get product by ID
+      tags:
+      - Products
+    put:
+      consumes:
+      - application/json
+      description: Update an existing product's information
+      parameters:
+      - description: Product UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated product data
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateProductRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Update product information
+      tags:
+      - Products
+  /api/v1/products/{id}/stock:
+    put:
+      consumes:
+      - application/json
+      description: Update stock quantity for a product in a specific warehouse
+      parameters:
+      - description: Product UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Stock update data
+        in: body
+        name: stock
+        required: true
+        schema:
+          $ref: '#/definitions/dto.BulkUpdateStockRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Update product stock
+      tags:
+      - Products
+  /api/v1/products/low-stock:
+    get:
+      description: Get list of products with stock below minimum threshold
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get low stock products
+      tags:
+      - Products
+  /api/v1/products/search:
+    get:
+      description: Search products by name, SKU, or barcode
+      parameters:
+      - description: Search query
+        in: query
+        name: query
+        required: true
+        type: string
+      - default: 20
+        description: Maximum results
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Search products
+      tags:
+      - Products
+  /api/v1/purchase-order:
+    get:
+      description: Mendapatkan semua purchase order
+      parameters:
+      - description: Supplier ID
+        in: query
+        name: supplier_id
+        type: string
+      - description: Status
+        in: query
+        name: status
+        type: string
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get all purchase orders
+      tags:
+      - PurchaseOrder
+    post:
+      consumes:
+      - application/json
+      description: Membuat purchase order baru
+      parameters:
+      - description: Purchase Order
+        in: body
+        name: purchase_order
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreatePurchaseOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Create purchase order
+      tags:
+      - PurchaseOrder
+  /api/v1/purchase-order/{id}:
+    get:
+      description: Mendapatkan purchase order berdasarkan ID
+      parameters:
+      - description: Purchase Order UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get purchase order by ID
+      tags:
+      - PurchaseOrder
+  /api/v1/purchase-order/{id}/approve:
+    post:
+      description: Menyetujui purchase order
+      parameters:
+      - description: Purchase Order UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Approve purchase order
+      tags:
+      - PurchaseOrder
+  /api/v1/purchase-order/{id}/cancel:
+    post:
+      description: Membatalkan purchase order
+      parameters:
+      - description: Purchase Order UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Cancel purchase order
+      tags:
+      - PurchaseOrder
+  /api/v1/query/{code}:
+    get:
+      description: Execute a query from the catalog
+      parameters:
+      - description: Catalog Code
+        in: path
+        name: code
+        required: true
+        type: string
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful operation
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.ResponseAPI'
+            - properties:
+                data: {}
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Query Catalog Execution
+      tags:
+      - Query Catalog
+  /api/v1/role:
+    get:
+      description: Mengambil semua data role yang aktif
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get all roles
+      tags:
+      - Role
+    post:
+      consumes:
+      - application/json
+      description: Membuat role baru
+      parameters:
+      - description: Role
+        in: body
+        name: role
+        required: true
+        schema:
+          $ref: '#/definitions/role.CreateRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Create role
+      tags:
+      - Role
+  /api/v1/role/{id}:
+    get:
+      description: Mengambil role berdasarkan ID
+      parameters:
+      - description: Role UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get role by ID
+      tags:
+      - Role
+    put:
+      consumes:
+      - application/json
+      description: Mengupdate data role
+      parameters:
+      - description: Role UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Role
+        in: body
+        name: role
+        required: true
+        schema:
+          $ref: '#/definitions/role.UpdateRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Update role
+      tags:
+      - Role
+  /api/v1/role/user/{userId}:
+    get:
+      description: Mengambil roles berdasarkan user ID
+      parameters:
+      - description: User UUID
+        in: path
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get roles by user
+      tags:
+      - Role
+  /api/v1/sales-orders:
+    get:
+      description: Get all sales orders with optional filters
+      parameters:
+      - description: Filter by customer ID
+        in: query
+        name: customer_id
+        type: string
+      - description: Filter by warehouse ID
+        in: query
+        name: warehouse_id
+        type: string
+      - description: Filter by status
+        in: query
+        name: status
+        type: string
+      - description: Limit results
+        in: query
+        name: limit
+        type: integer
+      - description: Offset results
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get all sales orders
+      tags:
+      - Sales Order
+    post:
+      consumes:
+      - application/json
+      description: Create a new sales order with items
+      parameters:
+      - description: Sales Order data
+        in: body
+        name: sales_order
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateSalesOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Create a new sales order
+      tags:
+      - Sales Order
+  /api/v1/sales-orders/{id}:
+    get:
+      description: Get sales order by ID
+      parameters:
+      - description: Sales Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get sales order by ID
+      tags:
+      - Sales Order
+  /api/v1/sales-orders/{id}/approve:
+    put:
+      description: Approve sales order by ID
+      parameters:
+      - description: Sales Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Approve sales order
+      tags:
+      - Sales Order
+  /api/v1/sales-orders/{id}/cancel:
+    put:
+      description: Cancel sales order by ID
+      parameters:
+      - description: Sales Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Cancel sales order
+      tags:
+      - Sales Order
+  /api/v1/supplier:
+    get:
+      description: Mendapatkan semua supplier
+      parameters:
+      - description: Active only
+        in: query
+        name: active_only
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get all suppliers
+      tags:
+      - Supplier
+    post:
+      consumes:
+      - application/json
+      description: Membuat supplier baru
+      parameters:
+      - description: Supplier
+        in: body
+        name: supplier
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateSupplierRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Create supplier
+      tags:
+      - Supplier
+  /api/v1/supplier/{id}:
+    delete:
+      description: Menghapus supplier berdasarkan ID
+      parameters:
+      - description: Supplier UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Delete supplier
+      tags:
+      - Supplier
+    get:
+      description: Mendapatkan supplier berdasarkan ID
+      parameters:
+      - description: Supplier UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get supplier by ID
+      tags:
+      - Supplier
+    put:
+      consumes:
+      - application/json
+      description: Mengupdate data supplier
+      parameters:
+      - description: Supplier UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Supplier
+        in: body
+        name: supplier
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateSupplierRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Update supplier
+      tags:
+      - Supplier
+  /api/v1/warehouse:
+    get:
+      description: get semua data warehouse
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get all warehouses
+      tags:
+      - Warehouse
+    post:
+      consumes:
+      - application/json
+      description: Membuat warehouse baru
+      parameters:
+      - description: Warehouse
+        in: body
+        name: warehouse
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateWarehouseRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Create warehouse
+      tags:
+      - Warehouse
+  /api/v1/warehouse/{id}:
+    delete:
+      description: Menghapus warehouse berdasarkan ID
+      parameters:
+      - description: Warehouse UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Delete warehouse
+      tags:
+      - Warehouse
+    get:
+      description: get warehouse berdasarkan ID
+      parameters:
+      - description: Warehouse UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get warehouse by ID
+      tags:
+      - Warehouse
+    put:
+      consumes:
+      - application/json
+      description: Mengupdate data warehouse
+      parameters:
+      - description: Warehouse UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Warehouse
+        in: body
+        name: warehouse
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateWarehouseRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Update warehouse
+      tags:
+      - Warehouse
+  /api/v1/warehouse/{id}/stats:
+    get:
+      description: get statistik warehouse
+      parameters:
+      - description: Warehouse UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ResponseAPI'
+      security:
+      - BearerAuth: []
+      summary: Get warehouse stats
+      tags:
+      - Warehouse
+schemes:
+- http
+- https
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

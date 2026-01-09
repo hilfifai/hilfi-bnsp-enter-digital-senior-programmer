@@ -1,0 +1,761 @@
+{
+	"info": {
+		"_postman_id": "inventory-system-api-collection-4",
+		"name": "Inventory System API - Part 4 (Role, Product Stock, Query Catalog)",
+		"description": "Postman collection for Role, Product Stock, and Query Catalog endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "roleId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "queryCode",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"item": [
+		{
+			"name": "Roles",
+			"item": [
+				{
+					"name": "Get All Roles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/role",
+							"host": ["{{baseUrl}}"],
+							"path": ["role"]
+						},
+						"description": "Get all active roles"
+					},
+					"response": [
+						{
+							"name": "Get All Roles Success - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/role",
+									"host": ["{{baseUrl}}"],
+									"path": ["role"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Success get all roles\",\n    \"data\": [\n        {\n            \"id\": \"550e8400-e29b-41d4-a716-446655440000\",\n            \"code\": \"ADMIN\",\n            \"name\": \"Administrator\",\n            \"description\": \"Full system access\",\n            \"is_active\": true\n        },\n        {\n            \"id\": \"550e8400-e29b-41d4-a716-446655440001\",\n            \"code\": \"MANAGER\",\n            \"name\": \"Manager\",\n            \"description\": \"Management access\",\n            \"is_active\": true\n        },\n        {\n            \"id\": \"550e8400-e29b-41d4-a716-446655440002\",\n            \"code\": \"STAFF\",\n            \"name\": \"Staff\",\n            \"description\": \"Basic staff access\",\n            \"is_active\": true\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Role by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/role/{{roleId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["role", "{{roleId}}"]
+						},
+						"description": "Get role details by ID"
+					},
+					"response": [
+						{
+							"name": "Get Role Success - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/role/{{roleId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["role", "{{roleId}}"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Success get role by ID\",\n    \"data\": {\n        \"id\": \"550e8400-e29b-41d4-a716-446655440000\",\n        \"code\": \"ADMIN\",\n        \"name\": \"Administrator\",\n        \"description\": \"Full system access with all permissions\",\n        \"is_active\": true,\n        \"permissions\": [\n            \"*\"\n        ],\n        \"created_at\": \"2025-01-01T00:00:00Z\",\n        \"updated_at\": \"2025-01-01T00:00:00Z\"\n    }\n}"
+						},
+						{
+							"name": "Role Not Found - Unit Test",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/role/00000000-0000-0000-0000-000000000000",
+									"host": ["{{baseUrl}}"],
+									"path": ["role", "00000000-0000-0000-0000-000000000000"]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Role not found\"\n}"
+						},
+						{
+							"name": "Invalid UUID Format - Unit Test",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/role/invalid-uuid",
+									"host": ["{{baseUrl}}"],
+									"path": ["role", "invalid-uuid"]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"invalid UUID\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Roles by User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/role/user/{{userId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["role", "user", "{{userId}}"]
+						},
+						"description": "Get roles assigned to a specific user"
+					},
+					"response": [
+						{
+							"name": "Get Roles by User Success - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/role/user/{{userId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["role", "user", "{{userId}}"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Success get roles by user\",\n    \"data\": [\n        {\n            \"id\": \"550e8400-e29b-41d4-a716-446655440000\",\n            \"code\": \"ADMIN\",\n            \"name\": \"Administrator\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Role",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"role_group_id\": \"440e8400-e29b-41d4-a716-446655440000\",\n    \"code\": \"SUPERVISOR\",\n    \"name\": \"Supervisor\",\n    \"description\": \"Supervisor role with limited access\",\n    \"is_active\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/role",
+							"host": ["{{baseUrl}}"],
+							"path": ["role"]
+						},
+						"description": "Create a new role"
+					},
+					"response": [
+						{
+							"name": "Create Role Success - UAT Example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"role_group_id\": \"440e8400-e29b-41d4-a716-446655440000\",\n    \"code\": \"SUPERVISOR\",\n    \"name\": \"Supervisor\",\n    \"description\": \"Supervisor role with limited access\",\n    \"is_active\": true\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/role",
+									"host": ["{{baseUrl}}"],
+									"path": ["role"]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Role\",\n    \"data\": {\n        \"id\": \"550e8400-e29b-41d4-a716-446655440003\",\n        \"role_group_id\": \"440e8400-e29b-41d4-a716-446655440000\",\n        \"code\": \"SUPERVISOR\",\n        \"name\": \"Supervisor\",\n        \"description\": \"Supervisor role with limited access\",\n        \"is_active\": true,\n        \"created_at\": \"2025-01-08T10:00:00Z\",\n        \"updated_at\": \"2025-01-08T10:00:00Z\"\n    }\n}"
+						},
+						{
+							"name": "Validation Error - Missing Required Fields - Unit Test",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"\",\n    \"name\": \"\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/role",
+									"host": ["{{baseUrl}}"],
+									"path": ["role"]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Validation failed\",\n    \"errors\": {\n        \"code\": \"Code is required\",\n        \"name\": \"Name is required\",\n        \"role_group_id\": \"Role group ID is required\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Role",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"role_group_id\": \"440e8400-e29b-41d4-a716-446655440000\",\n    \"code\": \"SUPERVISOR\",\n    \"name\": \"Senior Supervisor\",\n    \"description\": \"Updated supervisor role description\",\n    \"is_active\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/role/{{roleId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["role", "{{roleId}}"]
+						},
+						"description": "Update role details"
+					},
+					"response": [
+						{
+							"name": "Update Role Success - UAT Example",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Senior Supervisor\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/role/{{roleId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["role", "{{roleId}}"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Role updated successfully\"\n}"
+						},
+						{
+							"name": "Role Not Found - Unit Test",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Updated Role\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/role/00000000-0000-0000-0000-000000000000",
+									"host": ["{{baseUrl}}"],
+									"path": ["role", "00000000-0000-0000-0000-000000000000"]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Role not found\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Product Stock",
+			"item": [
+				{
+					"name": "Get Stock",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/product-stocks?page=1&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["product-stocks"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Get all product stock with pagination"
+					},
+					"response": [
+						{
+							"name": "Get Stock Success - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/product-stocks",
+									"host": ["{{baseUrl}}"],
+									"path": ["product-stocks"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Success get stock\",\n    \"data\": {\n        \"stocks\": [\n            {\n                \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n                \"product_name\": \"Laptop Dell Inspiron 15\",\n                \"sku\": \"PROD-001\",\n                \"total_available\": 45,\n                \"total_reserved\": 5,\n                \"total_on_hand\": 50,\n                \"warehouses\": [\n                    {\n                        \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n                        \"warehouse_name\": \"Main Warehouse\",\n                        \"available\": 30,\n                        \"reserved\": 5,\n                        \"on_hand\": 35\n                    }\n                ]\n            }\n        ],\n        \"pagination\": {\n            \"page\": 1,\n            \"limit\": 10,\n            \"total\": 1,\n            \"totalPages\": 1\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Stock",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n    \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n    \"quantity\": 50,\n    \"type\": \"SET\",\n    \"reason\": \"Initial stock setup\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/product-stocks",
+							"host": ["{{baseUrl}}"],
+							"path": ["product-stocks"]
+						},
+						"description": "Update product stock"
+					},
+					"response": [
+						{
+							"name": "Update Stock Success - UAT Example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n    \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n    \"quantity\": 50,\n    \"type\": \"SET\",\n    \"reason\": \"Initial stock setup\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/product-stocks",
+									"host": ["{{baseUrl}}"],
+									"path": ["product-stocks"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Stock updated successfully\"\n}"
+						},
+						{
+							"name": "Invalid Stock Type - Unit Test",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n    \"quantity\": 10,\n    \"type\": \"INVALID_TYPE\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/product-stocks",
+									"host": ["{{baseUrl}}"],
+									"path": ["product-stocks"]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Validation failed\",\n    \"errors\": {\n        \"type\": \"Stock operation type must be INCREMENT, DECREMENT, or SET\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Stock Movements",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/product-stocks/movements?page=1&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["product-stocks", "movements"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Get stock movement history"
+					},
+					"response": [
+						{
+							"name": "Get Stock Movements Success - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/product-stocks/movements",
+									"host": ["{{baseUrl}}"],
+									"path": ["product-stocks", "movements"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Success get stock movements\",\n    \"data\": {\n        \"movements\": [\n            {\n                \"id\": \"770e8400-e29b-41d4-a716-446655440001\",\n                \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n                \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n                \"type\": \"IN\",\n                \"quantity\": 100,\n                \"reference_type\": \"GOODS_RECEIPT\",\n                \"reference_id\": \"dd0e8400-e29b-41d4-a716-446655440001\",\n                \"created_at\": \"2025-01-08T10:00:00Z\"\n            },\n            {\n                \"id\": \"770e8400-e29b-41d4-a716-446655440002\",\n                \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n                \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n                \"type\": \"OUT\",\n                \"quantity\": 5,\n                \"reference_type\": \"DELIVERY_ORDER\",\n                \"reference_id\": \"bb0e8400-e29b-41d4-a716-446655440001\",\n                \"created_at\": \"2025-01-08T11:00:00Z\"\n            }\n        ],\n        \"pagination\": {\n            \"page\": 1,\n            \"limit\": 10,\n            \"total\": 2,\n            \"totalPages\": 1\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Low Stock Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/product-stocks/low-stock",
+							"host": ["{{baseUrl}}"],
+							"path": ["product-stocks", "low-stock"]
+						},
+						"description": "Get products with low stock levels"
+					},
+					"response": [
+						{
+							"name": "Get Low Stock Products Success - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/product-stocks/low-stock",
+									"host": ["{{baseUrl}}"],
+									"path": ["product-stocks", "low-stock"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Success get low stock products\",\n    \"data\": [\n        {\n            \"product_id\": \"550e8400-e29b-41d4-a716-446655440004\",\n            \"product_name\": \"Wireless Mouse\",\n            \"sku\": \"PROD-002\",\n            \"current_stock\": 5,\n            \"min_stock\": 10,\n            \"warehouse_name\": \"Main Warehouse\",\n            \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Stock by Product",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/product-stocks/product/{{productId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["product-stocks", "product", "{{productId}}"]
+						},
+						"description": "Get stock levels for a specific product"
+					},
+					"response": [
+						{
+							"name": "Get Stock by Product Success - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/product-stocks/product/{{productId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["product-stocks", "product", "{{productId}}"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Success get stock by product\",\n    \"data\": {\n        \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n        \"product_name\": \"Laptop Dell Inspiron 15\",\n        \"sku\": \"PROD-001\",\n        \"total_available\": 45,\n        \"total_reserved\": 5,\n        \"total_on_hand\": 50,\n        \"warehouses\": [\n            {\n                \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n                \"warehouse_name\": \"Main Warehouse\",\n                \"available\": 30,\n                \"reserved\": 5,\n                \"on_hand\": 35\n            },\n            {\n                \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440002\",\n                \"warehouse_name\": \"Secondary Warehouse\",\n                \"available\": 15,\n                \"reserved\": 0,\n                \"on_hand\": 15\n            }\n        ]\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Stock by Warehouse",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/product-stocks/warehouse/{{warehouseId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["product-stocks", "warehouse", "{{warehouseId}}"]
+						},
+						"description": "Get all stock levels for a specific warehouse"
+					},
+					"response": [
+						{
+							"name": "Get Stock by Warehouse Success - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/product-stocks/warehouse/{{warehouseId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["product-stocks", "warehouse", "{{warehouseId}}"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Success get stock by warehouse\",\n    \"data\": {\n        \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n        \"warehouse_name\": \"Main Warehouse\",\n        \"total_products\": 50,\n        \"total_quantity\": 5000,\n        \"stocks\": [\n            {\n                \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n                \"product_name\": \"Laptop Dell Inspiron 15\",\n                \"available\": 30,\n                \"reserved\": 5,\n                \"on_hand\": 35\n            }\n        ]\n    }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Query Catalog",
+			"item": [
+				{
+					"name": "Execute Query",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/query/{{queryCode}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["query", "{{queryCode}}"]
+						},
+						"description": "Execute a pre-defined query from the catalog"
+					},
+					"response": [
+						{
+							"name": "Execute Query Success - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/query/inventory_summary",
+									"host": ["{{baseUrl}}"],
+									"path": ["query", "inventory_summary"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Query executed successfully\",\n    \"data\": {\n        \"query_code\": \"inventory_summary\",\n        \"results\": [\n            {\n                \"warehouse\": \"Main Warehouse\",\n                \"total_products\": 50,\n                \"total_quantity\": 5000,\n                \"total_value\": \"750000.00\"\n            },\n            {\n                \"warehouse\": \"Secondary Warehouse\",\n                \"total_products\": 30,\n                \"total_quantity\": 3000,\n                \"total_value\": \"450000.00\"\n            }\n        ],\n        \"executed_at\": \"2025-01-08T10:00:00Z\"\n    }\n}"
+						},
+						{
+							"name": "Query Not Found - Unit Test",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/query/non_existent_query",
+									"host": ["{{baseUrl}}"],
+									"path": ["query", "non_existent_query"]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Query not found\",\n    \"errors\": {\n        \"query_code\": \"Query code 'non_existent_query' is not registered\"\n    }\n}"
+						},
+						{
+							"name": "Unauthorized - Unit Test",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/query/sensitive_data",
+									"host": ["{{baseUrl}}"],
+									"path": ["query", "sensitive_data"]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Unauthorized\",\n    \"errors\": {\n        \"permission\": \"You do not have permission to execute this query\"\n    }\n}"
+						}
+					]
+				}
+			]
+		}
+	]
+}

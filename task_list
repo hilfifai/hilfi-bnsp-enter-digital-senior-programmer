@@ -1,0 +1,17 @@
+[V] Assessment:
+ [V] ode assessment dan assessment detail duplikat
+ [V] POST is active false jadi true (assessment dan assessment detail)
+ [V] Url get active items by assessment id 404
+ 
+ Group:
+ [V] Code group dan group detail duplikat
+ [V]  POST is active false jadi true (group dan group detail)
+
+Others:
+ [V] Code others dan others detail duplikat
+ [V]  POST is active false jadi true (others dan others detail)
+
+
+ SCHEDULE:
+    tambahkan validation untuk cek activity di m_configuration_other
+    tambahkan status id harus nyambung ke m_s

@@ -1,0 +1,1395 @@
+{
+	"info": {
+		"_postman_id": "inventory-system-api-collection-2",
+		"name": "Inventory System API - Part 2 (Warehouse, Monitoring, Reports)",
+		"description": "Postman collection for Warehouse, Warehouse Location, Monitoring, and Report endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "warehouseId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "locationId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "alertId",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"item": [
+		{
+			"name": "Warehouses",
+			"item": [
+				{
+					"name": "Create Warehouse",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"WH-MAIN\",\n    \"name\": \"Main Warehouse\",\n    \"address\": \"123 Industrial Area\",\n    \"city\": \"Jakarta\",\n    \"province\": \"DKI Jakarta\",\n    \"postal_code\": \"12345\",\n    \"country\": \"Indonesia\",\n    \"phone\": \"+62-21-12345678\",\n    \"email\": \"main@warehouse.com\",\n    \"manager_name\": \"John Doe\",\n    \"capacity\": 10000,\n    \"is_active\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/warehouse",
+							"host": ["{{baseUrl}}"],
+							"path": ["warehouse"]
+						},
+						"description": "Create a new warehouse"
+					},
+					"response": [
+						{
+							"name": "Create Warehouse Success - UAT Example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"WH-MAIN\",\n    \"name\": \"Main Warehouse\",\n    \"address\": \"123 Industrial Area\",\n    \"city\": \"Jakarta\",\n    \"is_active\": true\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/warehouse",
+									"host": ["{{baseUrl}}"],
+									"path": ["warehouse"]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Warehouse created successfully\",\n    \"data\": {\n        \"id\": \"660e8400-e29b-41d4-a716-446655440001\",\n        \"code\": \"WH-MAIN\",\n        \"name\": \"Main Warehouse\",\n        \"address\": \"123 Industrial Area\",\n        \"city\": \"Jakarta\",\n        \"is_active\": true,\n        \"created_at\": \"2025-01-08T10:00:00Z\",\n        \"updated_at\": \"2025-01-08T10:00:00Z\"\n    }\n}"
+						},
+						{
+							"name": "Validation Error - Missing Required Fields - Unit Test",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"\",\n    \"name\": \"\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/warehouse",
+									"host": ["{{baseUrl}}"],
+									"path": ["warehouse"]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Validation failed\",\n    \"errors\": {\n        \"code\": \"Code is required\",\n        \"name\": \"Name is required\"\n    }\n}"
+						},
+						{
+							"name": "Warehouse Code Already Exists - Unit Test",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"WH-MAIN\",\n    \"name\": \"Duplicate Warehouse\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/warehouse",
+									"host": ["{{baseUrl}}"],
+									"path": ["warehouse"]
+								}
+							},
+							"status": "Conflict",
+							"code": 409,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Warehouse code already exists\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Warehouses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/warehouse?page=1&limit=10&active_only=true",
+							"host": ["{{baseUrl}}"],
+							"path": ["warehouse"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "active_only",
+									"value": "true"
+								}
+							]
+						},
+						"description": "Get all warehouses with pagination"
+					},
+					"response": [
+						{
+							"name": "Get Warehouses Success - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/warehouse",
+									"host": ["{{baseUrl}}"],
+									"path": ["warehouse"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Warehouses retrieved successfully\",\n    \"data\": {\n        \"warehouses\": [\n            {\n                \"id\": \"660e8400-e29b-41d4-a716-446655440001\",\n                \"code\": \"WH-MAIN\",\n                \"name\": \"Main Warehouse\",\n                \"city\": \"Jakarta\",\n                \"is_active\": true\n            },\n            {\n                \"id\": \"660e8400-e29b-41d4-a716-446655440002\",\n                \"code\": \"WH-SEC\",\n                \"name\": \"Secondary Warehouse\",\n                \"city\": \"Surabaya\",\n                \"is_active\": true\n            }\n        ],\n        \"pagination\": {\n            \"page\": 1,\n            \"limit\": 10,\n            \"total\": 2,\n            \"totalPages\": 1\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Warehouse by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/warehouse/{{warehouseId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["warehouse", "{{warehouseId}}"]
+						},
+						"description": "Get warehouse details by ID"
+					},
+					"response": [
+						{
+							"name": "Get Warehouse Success - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/warehouse/{{warehouseId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["warehouse", "{{warehouseId}}"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Warehouse retrieved successfully\",\n    \"data\": {\n        \"id\": \"660e8400-e29b-41d4-a716-446655440001\",\n        \"code\": \"WH-MAIN\",\n        \"name\": \"Main Warehouse\",\n        \"address\": \"123 Industrial Area\",\n        \"city\": \"Jakarta\",\n        \"phone\": \"+62-21-12345678\",\n        \"email\": \"main@warehouse.com\",\n        \"manager_name\": \"John Doe\",\n        \"capacity\": 10000,\n        \"is_active\": true,\n        \"created_at\": \"2025-01-08T10:00:00Z\",\n        \"updated_at\": \"2025-01-08T10:00:00Z\"\n    }\n}"
+						},
+						{
+							"name": "Warehouse Not Found - Unit Test",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/warehouse/00000000-0000-0000-0000-000000000000",
+									"host": ["{{baseUrl}}"],
+									"path": ["warehouse", "00000000-0000-0000-0000-000000000000"]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Warehouse not found\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Warehouse Stats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/warehouse/{{warehouseId}}/stats",
+							"host": ["{{baseUrl}}"],
+							"path": ["warehouse", "{{warehouseId}}", "stats"]
+						},
+						"description": "Get warehouse statistics"
+					},
+					"response": [
+						{
+							"name": "Get Warehouse Stats - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/warehouse/{{warehouseId}}/stats",
+									"host": ["{{baseUrl}}"],
+									"path": ["warehouse", "{{warehouseId}}", "stats"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Warehouse stats retrieved successfully\",\n    \"data\": {\n        \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n        \"total_products\": 150,\n        \"total_quantity\": 5000,\n        \"total_value\": \"750000.00\",\n        \"low_stock_count\": 5,\n        \"locations_used\": 20,\n        \"locations_available\": 80\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Warehouse",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Main Warehouse (Updated)\",\n    \"address\": \"456 New Industrial Area\",\n    \"city\": \"Jakarta\",\n    \"manager_name\": \"Jane Doe\",\n    \"capacity\": 15000,\n    \"is_active\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/warehouse/{{warehouseId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["warehouse", "{{warehouseId}}"]
+						},
+						"description": "Update warehouse details"
+					},
+					"response": [
+						{
+							"name": "Update Warehouse Success - UAT Example",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Main Warehouse (Updated)\",\n    \"manager_name\": \"Jane Doe\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/warehouse/{{warehouseId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["warehouse", "{{warehouseId}}"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Warehouse updated successfully\",\n    \"data\": {\n        \"id\": \"660e8400-e29b-41d4-a716-446655440001\",\n        \"code\": \"WH-MAIN\",\n        \"name\": \"Main Warehouse (Updated)\",\n        \"updated_at\": \"2025-01-08T11:00:00Z\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Warehouse",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/warehouse/{{warehouseId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["warehouse", "{{warehouseId}}"]
+						},
+						"description": "Delete a warehouse (soft delete)"
+					},
+					"response": [
+						{
+							"name": "Delete Warehouse Success - UAT Example",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/warehouse/{{warehouseId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["warehouse", "{{warehouseId}}"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Warehouse deleted successfully\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Warehouse Locations",
+			"item": [
+				{
+					"name": "Create Location",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n    \"code\": \"A-01-01\",\n    \"name\": \"Aisle A, Rack 1, Level 1\",\n    \"zone\": \"A\",\n    \"aisle\": \"01\",\n    \"rack\": \"01\",\n    \"level\": \"01\",\n    \"capacity\": 100,\n    \"location_type\": \"STORAGE\",\n    \"is_active\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/location",
+							"host": ["{{baseUrl}}"],
+							"path": ["location"]
+						},
+						"description": "Create a new warehouse location"
+					},
+					"response": [
+						{
+							"name": "Create Location Success - UAT Example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n    \"code\": \"A-01-01\",\n    \"name\": \"Aisle A, Rack 1, Level 1\",\n    \"capacity\": 100,\n    \"is_active\": true\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/location",
+									"host": ["{{baseUrl}}"],
+									"path": ["location"]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Location created successfully\",\n    \"data\": {\n        \"id\": \"770e8400-e29b-41d4-a716-446655440001\",\n        \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n        \"code\": \"A-01-01\",\n        \"name\": \"Aisle A, Rack 1, Level 1\",\n        \"zone\": \"A\",\n        \"aisle\": \"01\",\n        \"rack\": \"01\",\n        \"level\": \"01\",\n        \"capacity\": 100,\n        \"is_active\": true,\n        \"created_at\": \"2025-01-08T10:00:00Z\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Locations by Warehouse",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/location?warehouse_id={{warehouseId}}&page=1&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["location"],
+							"query": [
+								{
+									"key": "warehouse_id",
+									"value": "{{warehouseId}}"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Get all locations for a warehouse"
+					},
+					"response": [
+						{
+							"name": "Get Locations Success - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/location?warehouse_id={{warehouseId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["location"],
+									"query": [
+										{
+											"key": "warehouse_id",
+											"value": "{{warehouseId}}"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Locations retrieved successfully\",\n    \"data\": {\n        \"locations\": [\n            {\n                \"id\": \"770e8400-e29b-41d4-a716-446655440001\",\n                \"code\": \"A-01-01\",\n                \"name\": \"Aisle A, Rack 1, Level 1\",\n                \"zone\": \"A\",\n                \"capacity\": 100,\n                \"is_active\": true\n            }\n        ],\n        \"pagination\": {\n            \"page\": 1,\n            \"limit\": 10,\n            \"total\": 1,\n            \"totalPages\": 1\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Location by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/location/{{locationId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["location", "{{locationId}}"]
+						},
+						"description": "Get location details by ID"
+					},
+					"response": [
+						{
+							"name": "Get Location Success - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/location/{{locationId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["location", "{{locationId}}"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Location retrieved successfully\",\n    \"data\": {\n        \"id\": \"770e8400-e29b-41d4-a716-446655440001\",\n        \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n        \"code\": \"A-01-01\",\n        \"name\": \"Aisle A, Rack 1, Level 1\",\n        \"zone\": \"A\",\n        \"aisle\": \"01\",\n        \"rack\": \"01\",\n        \"level\": \"01\",\n        \"capacity\": 100,\n        \"current_quantity\": 25,\n        \"is_active\": true\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Available Locations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/location/available?warehouse_id={{warehouseId}}&min_capacity=50",
+							"host": ["{{baseUrl}}"],
+							"path": ["location", "available"],
+							"query": [
+								{
+									"key": "warehouse_id",
+									"value": "{{warehouseId}}"
+								},
+								{
+									"key": "min_capacity",
+									"value": "50"
+								}
+							]
+						},
+						"description": "Get available locations with minimum capacity"
+					},
+					"response": [
+						{
+							"name": "Get Available Locations - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/location/available?warehouse_id={{warehouseId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["location", "available"],
+									"query": [
+										{
+											"key": "warehouse_id",
+											"value": "{{warehouseId}}"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Available locations retrieved successfully\",\n    \"data\": [\n        {\n            \"id\": \"770e8400-e29b-41d4-a716-446655440001\",\n            \"code\": \"A-01-01\",\n            \"name\": \"Aisle A, Rack 1, Level 1\",\n            \"available_capacity\": 75\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Location",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"A-01-01 (Updated)\",\n    \"capacity\": 150,\n    \"is_active\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/location/{{locationId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["location", "{{locationId}}"]
+						},
+						"description": "Update location details"
+					},
+					"response": [
+						{
+							"name": "Update Location Success - UAT Example",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"A-01-01 (Updated)\",\n    \"capacity\": 150\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/location/{{locationId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["location", "{{locationId}}"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Location updated successfully\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Location",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/location/{{locationId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["location", "{{locationId}}"]
+						},
+						"description": "Delete a location (soft delete)"
+					},
+					"response": [
+						{
+							"name": "Delete Location Success - UAT Example",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/location/{{locationId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["location", "{{locationId}}"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Location deleted successfully\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Monitoring",
+			"item": [
+				{
+					"name": "Get Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/monitoring/health",
+							"host": ["{{baseUrl}}"],
+							"path": ["monitoring", "health"]
+						},
+						"description": "Check system health status"
+					},
+					"response": [
+						{
+							"name": "Health Check Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/monitoring/health",
+									"host": ["{{baseUrl}}"],
+									"path": ["monitoring", "health"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"System is healthy\",\n    \"data\": {\n        \"status\": \"healthy\",\n        \"database\": \"connected\",\n        \"uptime\": \"24h 30m 15s\",\n        \"memory_usage\": \"45.2 MB\",\n        \"cpu_usage\": \"12.5%\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Metrics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/monitoring/metrics",
+							"host": ["{{baseUrl}}"],
+							"path": ["monitoring", "metrics"]
+						},
+						"description": "Get system metrics"
+					},
+					"response": [
+						{
+							"name": "Get Metrics Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/monitoring/metrics",
+									"host": ["{{baseUrl}}"],
+									"path": ["monitoring", "metrics"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Metrics retrieved successfully\",\n    \"data\": {\n        \"total_requests\": 12500,\n        \"successful_requests\": 12480,\n        \"failed_requests\": 20,\n        \"average_response_time\": \"45ms\",\n        \"active_connections\": 15,\n        \"requests_per_minute\": 85\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Dashboard",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/monitoring/dashboard",
+							"host": ["{{baseUrl}}"],
+							"path": ["monitoring", "dashboard"]
+						},
+						"description": "Get monitoring dashboard data"
+					},
+					"response": [
+						{
+							"name": "Get Dashboard Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/monitoring/dashboard",
+									"host": ["{{baseUrl}}"],
+									"path": ["monitoring", "dashboard"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Dashboard data retrieved successfully\",\n    \"data\": {\n        \"overview\": {\n            \"total_products\": 500,\n            \"total_orders\": 1250,\n            \"total_revenue\": \"1250000.00\",\n            \"pending_orders\": 15\n        },\n        \"inventory_alerts\": {\n            \"low_stock\": 10,\n            \"out_of_stock\": 2,\n            \"expiring_soon\": 5\n        },\n        \"recent_activity\": [\n            {\n                \"type\": \"ORDER_CREATED\",\n                \"message\": \"New order #ORD-2025-001 created\",\n                \"timestamp\": \"2025-01-08T10:30:00Z\"\n            }\n        ]\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Alerts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/monitoring/alerts?page=1&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["monitoring", "alerts"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Get system alerts"
+					},
+					"response": [
+						{
+							"name": "Get Alerts Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/monitoring/alerts",
+									"host": ["{{baseUrl}}"],
+									"path": ["monitoring", "alerts"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Alerts retrieved successfully\",\n    \"data\": {\n        \"alerts\": [\n            {\n                \"id\": \"880e8400-e29b-41d4-a716-446655440001\",\n                \"type\": \"LOW_STOCK\",\n                \"severity\": \"warning\",\n                \"message\": \"Product 'Wireless Mouse' is running low on stock\",\n                \"product_id\": \"550e8400-e29b-41d4-a716-446655440004\",\n                \"is_read\": false,\n                \"created_at\": \"2025-01-08T10:00:00Z\"\n            },\n            {\n                \"id\": \"880e8400-e29b-41d4-a716-446655440002\",\n                \"type\": \"OUT_OF_STOCK\",\n                \"severity\": \"critical\",\n                \"message\": \"Product 'USB Cable' is out of stock\",\n                \"product_id\": \"550e8400-e29b-41d4-a716-446655440005\",\n                \"is_read\": false,\n                \"created_at\": \"2025-01-08T09:30:00Z\"\n            }\n        ],\n        \"pagination\": {\n            \"page\": 1,\n            \"limit\": 10,\n            \"total\": 2,\n            \"totalPages\": 1\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Mark Alert as Read",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/monitoring/alerts/{{alertId}}/read",
+							"host": ["{{baseUrl}}"],
+							"path": ["monitoring", "alerts", "{{alertId}}", "read"]
+						},
+						"description": "Mark an alert as read"
+					},
+					"response": [
+						{
+							"name": "Mark Alert as Read Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/monitoring/alerts/{{alertId}}/read",
+									"host": ["{{baseUrl}}"],
+									"path": ["monitoring", "alerts", "{{alertId}}", "read"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Alert marked as read successfully\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Audit Logs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/monitoring/audit-logs?page=1&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["monitoring", "audit-logs"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Get audit logs"
+					},
+					"response": [
+						{
+							"name": "Get Audit Logs Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/monitoring/audit-logs",
+									"host": ["{{baseUrl}}"],
+									"path": ["monitoring", "audit-logs"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Audit logs retrieved successfully\",\n    \"data\": {\n        \"logs\": [\n            {\n                \"id\": \"990e8400-e29b-41d4-a716-446655440001\",\n                \"user_id\": \"550e8400-e29b-41d4-a716-446655440000\",\n                \"user_email\": \"admin@example.com\",\n                \"action\": \"PRODUCT_CREATED\",\n                \"resource_type\": \"product\",\n                \"resource_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n                \"details\": \"Created new product 'Laptop Dell Inspiron 15'\",\n                \"ip_address\": \"192.168.1.100\",\n                \"created_at\": \"2025-01-08T10:00:00Z\"\n            }\n        ],\n        \"pagination\": {\n            \"page\": 1,\n            \"limit\": 10,\n            \"total\": 1,\n            \"totalPages\": 1\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Performance Report",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/monitoring/performance?start_date=2025-01-01&end_date=2025-01-08",
+							"host": ["{{baseUrl}}"],
+							"path": ["monitoring", "performance"],
+							"query": [
+								{
+									"key": "start_date",
+									"value": "2025-01-01"
+								},
+								{
+									"key": "end_date",
+									"value": "2025-01-08"
+								}
+							]
+						},
+						"description": "Get performance report for a specific period"
+					},
+					"response": [
+						{
+							"name": "Get Performance Report Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/monitoring/performance?start_date=2025-01-01&end_date=2025-01-08",
+									"host": ["{{baseUrl}}"],
+									"path": ["monitoring", "performance"],
+									"query": [
+										{
+											"key": "start_date",
+											"value": "2025-01-01"
+										},
+										{
+											"key": "end_date",
+											"value": "2025-01-08"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Performance report retrieved successfully\",\n    \"data\": {\n        \"period\": {\n            \"start_date\": \"2025-01-01\",\n            \"end_date\": \"2025-01-08\"\n        },\n        \"metrics\": {\n            \"total_requests\": 12500,\n            \"successful_requests\": 12480,\n            \"failed_requests\": 20,\n            \"average_response_time\": \"45ms\",\n            \"p95_response_time\": \"120ms\",\n            \"p99_response_time\": \"250ms\"\n        },\n        \"top_endpoints\": [\n            {\n                \"endpoint\": \"POST /inventory/movements\",\n                \"requests\": 3500,\n                \"avg_response_time\": \"52ms\"\n            },\n            {\n                \"endpoint\": \"GET /products\",\n                \"requests\": 2800,\n                \"avg_response_time\": \"35ms\"\n            }\n        ]\n    }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Reports",
+			"item": [
+				{
+					"name": "Get Stock Report",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/reports/stock?warehouse_id={{warehouseId}}&page=1&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["reports", "stock"],
+							"query": [
+								{
+									"key": "warehouse_id",
+									"value": "{{warehouseId}}"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Get stock report with filtering"
+					},
+					"response": [
+						{
+							"name": "Get Stock Report Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/reports/stock",
+									"host": ["{{baseUrl}}"],
+									"path": ["reports", "stock"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Stock report retrieved successfully\",\n    \"data\": [\n        {\n            \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n            \"product_name\": \"Laptop Dell Inspiron 15\",\n            \"sku\": \"PROD-001\",\n            \"category_name\": \"Electronics\",\n            \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n            \"warehouse_name\": \"Main Warehouse\",\n            \"quantity\": 50,\n            \"reserved_quantity\": 5,\n            \"available_quantity\": 45,\n            \"unit_cost\": \"750.00\",\n            \"total_value\": \"37500.00\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Sales Report",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/reports/sales?start_date=2025-01-01&end_date=2025-01-08&page=1&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["reports", "sales"],
+							"query": [
+								{
+									"key": "start_date",
+									"value": "2025-01-01"
+								},
+								{
+									"key": "end_date",
+									"value": "2025-01-08"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Get sales report for a specific period"
+					},
+					"response": [
+						{
+							"name": "Get Sales Report Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/reports/sales?start_date=2025-01-01&end_date=2025-01-08",
+									"host": ["{{baseUrl}}"],
+									"path": ["reports", "sales"],
+									"query": [
+										{
+											"key": "start_date",
+											"value": "2025-01-01"
+										},
+										{
+											"key": "end_date",
+											"value": "2025-01-08"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Sales report retrieved successfully\",\n    \"data\": {\n        \"summary\": {\n            \"total_orders\": 150,\n            \"total_items_sold\": 500,\n            \"total_revenue\": \"125000.00\",\n            \"average_order_value\": \"833.33\"\n        },\n        \"sales\": [\n            {\n                \"order_id\": \"aa0e8400-e29b-41d4-a716-446655440001\",\n                \"order_number\": \"SO-2025-0001\",\n                \"order_date\": \"2025-01-08T10:00:00Z\",\n                \"customer_name\": \"Customer A\",\n                \"items_count\": 5,\n                \"total_amount\": \"2500.00\",\n                \"status\": \"COMPLETED\"\n            }\n        ]\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Inventory Valuation",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/reports/inventory-valuation?warehouse_id={{warehouseId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["reports", "inventory-valuation"],
+							"query": [
+								{
+									"key": "warehouse_id",
+									"value": "{{warehouseId}}"
+								}
+							]
+						},
+						"description": "Get inventory valuation report"
+					},
+					"response": [
+						{
+							"name": "Get Inventory Valuation Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/reports/inventory-valuation",
+									"host": ["{{baseUrl}}"],
+									"path": ["reports", "inventory-valuation"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Inventory valuation retrieved successfully\",\n    \"data\": [\n        {\n            \"category_name\": \"Electronics\",\n            \"total_products\": 50,\n            \"total_quantity\": 5000,\n            \"total_cost_value\": \"750000.00\",\n            \"total_retail_value\": \"1000000.00\"\n        },\n        {\n            \"category_name\": \"Accessories\",\n            \"total_products\": 100,\n            \"total_quantity\": 10000,\n            \"total_cost_value\": \"250000.00\",\n            \"total_retail_value\": \"400000.00\"\n        }\n    ],\n    \"grand_total\": {\n        \"total_products\": 150,\n        \"total_quantity\": 15000,\n        \"total_cost_value\": \"1000000.00\",\n        \"total_retail_value\": \"1400000.00\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Profit/Loss Report",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/reports/profit-loss?start_date=2025-01-01&end_date=2025-01-08",
+							"host": ["{{baseUrl}}"],
+							"path": ["reports", "profit-loss"],
+							"query": [
+								{
+									"key": "start_date",
+									"value": "2025-01-01"
+								},
+								{
+									"key": "end_date",
+									"value": "2025-01-08"
+								}
+							]
+						},
+						"description": "Get profit and loss report for a specific period"
+					},
+					"response": [
+						{
+							"name": "Get Profit/Loss Report Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/reports/profit-loss?start_date=2025-01-01&end_date=2025-01-08",
+									"host": ["{{baseUrl}}"],
+									"path": ["reports", "profit-loss"],
+									"query": [
+										{
+											"key": "start_date",
+											"value": "2025-01-01"
+										},
+										{
+											"key": "end_date",
+											"value": "2025-01-08"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Profit/Loss report retrieved successfully\",\n    \"data\": {\n        \"period\": {\n            \"start_date\": \"2025-01-01\",\n            \"end_date\": \"2025-01-08\"\n        },\n        \"total_sales\": \"500000.00\",\n        \"total_cost\": \"350000.00\",\n        \"gross_profit\": \"150000.00\",\n        \"expenses\": \"50000.00\",\n        \"net_profit\": \"100000.00\",\n        \"profit_margin\": 20\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Top Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/reports/top-products?limit=10&period=month",
+							"host": ["{{baseUrl}}"],
+							"path": ["reports", "top-products"],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "period",
+									"value": "month"
+								}
+							]
+						},
+						"description": "Get top selling products"
+					},
+					"response": [
+						{
+							"name": "Get Top Products Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/reports/top-products?limit=10&period=month",
+									"host": ["{{baseUrl}}"],
+									"path": ["reports", "top-products"],
+									"query": [
+										{
+											"key": "limit",
+											"value": "10"
+										},
+										{
+											"key": "period",
+											"value": "month"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Top products retrieved successfully\",\n    \"data\": [\n        {\n            \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n            \"product_name\": \"Laptop Dell Inspiron 15\",\n            \"sku\": \"PROD-001\",\n            \"total_sold\": 150,\n            \"total_revenue\": \"149850.00\",\n            \"profit\": \"37462.50\"\n        },\n        {\n            \"product_id\": \"550e8400-e29b-41d4-a716-446655440004\",\n            \"product_name\": \"Wireless Mouse\",\n            \"sku\": \"PROD-002\",\n            \"total_sold\": 300,\n            \"total_revenue\": \"15000.00\",\n            \"profit\": \"6000.00\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Low Stock Report",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/reports/low-stock",
+							"host": ["{{baseUrl}}"],
+							"path": ["reports", "low-stock"]
+						},
+						"description": "Get low stock report"
+					},
+					"response": [
+						{
+							"name": "Get Low Stock Report Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/reports/low-stock",
+									"host": ["{{baseUrl}}"],
+									"path": ["reports", "low-stock"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Low stock report retrieved successfully\",\n    \"data\": [\n        {\n            \"product_id\": \"550e8400-e29b-41d4-a716-446655440004\",\n            \"product_name\": \"Wireless Mouse\",\n            \"sku\": \"PROD-002\",\n            \"category_name\": \"Electronics\",\n            \"current_stock\": 5,\n            \"min_stock\": 10,\n            \"warehouse_name\": \"Main Warehouse\",\n            \"suggested_reorder_qty\": 50\n        },\n        {\n            \"product_id\": \"550e8400-e29b-41d4-a716-446655440005\",\n            \"product_name\": \"USB Cable\",\n            \"sku\": \"PROD-003\",\n            \"category_name\": \"Accessories\",\n            \"current_stock\": 0,\n            \"min_stock\": 20,\n            \"warehouse_name\": \"Main Warehouse\",\n            \"suggested_reorder_qty\": 100\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Movement Report",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/reports/movements?start_date=2025-01-01&end_date=2025-01-08&movement_type=IN&page=1&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["reports", "movements"],
+							"query": [
+								{
+									"key": "start_date",
+									"value": "2025-01-01"
+								},
+								{
+									"key": "end_date",
+									"value": "2025-01-08"
+								},
+								{
+									"key": "movement_type",
+									"value": "IN"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Get stock movement report"
+					},
+					"response": [
+						{
+							"name": "Get Movement Report Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/reports/movements?start_date=2025-01-01&end_date=2025-01-08",
+									"host": ["{{baseUrl}}"],
+									"path": ["reports", "movements"],
+									"query": [
+										{
+											"key": "start_date",
+											"value": "2025-01-01"
+										},
+										{
+											"key": "end_date",
+											"value": "2025-01-08"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Movement report retrieved successfully\",\n    \"data\": {\n        \"movements\": [\n            {\n                \"id\": \"770e8400-e29b-41d4-a716-446655440001\",\n                \"movement_type\": \"IN\",\n                \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n                \"product_name\": \"Laptop Dell Inspiron 15\",\n                \"from_warehouse\": null,\n                \"to_warehouse\": \"Main Warehouse\",\n                \"quantity\": 100,\n                \"reference_number\": \"MOV-2025-0001\",\n                \"created_at\": \"2025-01-08T10:00:00Z\"\n            },\n            {\n                \"id\": \"770e8400-e29b-41d4-a716-446655440002\",\n                \"movement_type\": \"OUT\",\n                \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n                \"product_name\": \"Laptop Dell Inspiron 15\",\n                \"from_warehouse\": \"Main Warehouse\",\n                \"to_warehouse\": null,\n                \"quantity\": 5,\n                \"reference_number\": \"MOV-2025-0002\",\n                \"created_at\": \"2025-01-08T11:00:00Z\"\n            }\n        ],\n        \"summary\": {\n            \"total_in\": 1000,\n            \"total_out\": 150,\n            \"total_transfer\": 200\n        },\n        \"pagination\": {\n            \"page\": 1,\n            \"limit\": 10,\n            \"total\": 2,\n            \"totalPages\": 1\n        }\n    }\n}"
+						}
+					]
+				}
+			]
+		}
+	]
+}

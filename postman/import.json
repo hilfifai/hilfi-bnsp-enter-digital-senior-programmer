@@ -1,0 +1,2274 @@
+{
+	"info": {
+		"_postman_id": "inventory-system-api-collection",
+		"name": "Inventory System API - Testing Collection",
+		"description": "Postman collection for Inventory System API with examples for Unit Testing (Validation) and UAT",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "categoryId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "productId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "warehouseId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "purchaseOrderId",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "login"]
+						},
+						"description": "Authenticate user and get access token"
+					},
+					"response": [
+						{
+							"name": "Login Success - UAT Example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"admin@example.com\",\n    \"password\": \"password123\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/login",
+									"host": ["{{baseUrl}}"],
+									"path": ["auth", "login"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Login successful\",\n    \"data\": {\n        \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n        \"user\": {\n            \"id\": \"550e8400-e29b-41d4-a716-446655440000\",\n            \"email\": \"admin@example.com\",\n            \"name\": \"Admin User\",\n            \"role\": \"admin\"\n        }\n    }\n}"
+						},
+						{
+							"name": "Login Validation Error - Unit Test Example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"\",\n    \"password\": \"\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/login",
+									"host": ["{{baseUrl}}"],
+									"path": ["auth", "login"]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Validation failed\",\n    \"errors\": {\n        \"email\": \"Email is required\",\n        \"password\": \"Password is required\"\n    }\n}"
+						},
+						{
+							"name": "Invalid Credentials - Unit Test Example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"wrong@example.com\",\n    \"password\": \"wrongpassword\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/login",
+									"host": ["{{baseUrl}}"],
+									"path": ["auth", "login"]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Invalid email or password\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Product Categories",
+			"item": [
+				{
+					"name": "Create Category",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"ELEC\",\n    \"name\": \"Electronics\",\n    \"description\": \"Electronic products and accessories\",\n    \"is_active\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/product-categories",
+							"host": ["{{baseUrl}}"],
+							"path": ["product-categories"]
+						},
+						"description": "Create a new product category"
+					},
+					"response": [
+						{
+							"name": "Create Category Success - UAT Example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"ELEC\",\n    \"name\": \"Electronics\",\n    \"description\": \"Electronic products and accessories\",\n    \"is_active\": true\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/product-categories",
+									"host": ["{{baseUrl}}"],
+									"path": ["product-categories"]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Category created successfully\",\n    \"data\": {\n        \"id\": \"550e8400-e29b-41d4-a716-446655440001\",\n        \"code\": \"ELEC\",\n        \"name\": \"Electronics\",\n        \"description\": \"Electronic products and accessories\",\n        \"is_active\": true,\n        \"created_at\": \"2025-01-08T10:00:00Z\",\n        \"updated_at\": \"2025-01-08T10:00:00Z\"\n    }\n}"
+						},
+						{
+							"name": "Validation Error - Missing Required Fields - Unit Test",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"\",\n    \"name\": \"\",\n    \"description\": \"Test category\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/product-categories",
+									"host": ["{{baseUrl}}"],
+									"path": ["product-categories"]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Invalid category data\",\n    \"errors\": {\n        \"code\": \"Code is required and must be between 2 and 50 characters\",\n        \"name\": \"Name is required and must be between 2 and 200 characters\"\n    }\n}"
+						},
+						{
+							"name": "Validation Error - Code Too Short - Unit Test",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"A\",\n    \"name\": \"Test Category\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/product-categories",
+									"host": ["{{baseUrl}}"],
+									"path": ["product-categories"]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Invalid category data\",\n    \"errors\": {\n        \"code\": \"Code must be between 2 and 50 characters\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/product-categories?active_only=true",
+							"host": ["{{baseUrl}}"],
+							"path": ["product-categories"],
+							"query": [
+								{
+									"key": "active_only",
+									"value": "true"
+								}
+							]
+						},
+						"description": "Get all product categories"
+					},
+					"response": [
+						{
+							"name": "Get Categories Success - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/product-categories",
+									"host": ["{{baseUrl}}"],
+									"path": ["product-categories"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Categories retrieved successfully\",\n    \"data\": {\n        \"categories\": [\n            {\n                \"id\": \"550e8400-e29b-41d4-a716-446655440001\",\n                \"code\": \"ELEC\",\n                \"name\": \"Electronics\",\n                \"is_active\": true\n            },\n            {\n                \"id\": \"550e8400-e29b-41d4-a716-446655440002\",\n                \"code\": \"CLOTH\",\n                \"name\": \"Clothing\",\n                \"is_active\": true\n            }\n        ],\n        \"count\": 2\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Category by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/product-categories/{{categoryId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["product-categories", "{{categoryId}}"]
+						},
+						"description": "Get category details by ID"
+					},
+					"response": [
+						{
+							"name": "Category Not Found - Unit Test",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/product-categories/00000000-0000-0000-0000-000000000000",
+									"host": ["{{baseUrl}}"],
+									"path": ["product-categories", "00000000-0000-0000-0000-000000000000"]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Category not found\"\n}"
+						},
+						{
+							"name": "Invalid UUID Format - Unit Test",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/product-categories/invalid-uuid",
+									"host": ["{{baseUrl}}"],
+									"path": ["product-categories", "invalid-uuid"]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Invalid category ID\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Category",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Electronics\",\n    \"description\": \"Updated description\",\n    \"is_active\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/product-categories/{{categoryId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["product-categories", "{{categoryId}}"]
+						},
+						"description": "Update category details"
+					},
+					"response": [
+						{
+							"name": "Update Category Success - UAT Example",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Updated Electronics\",\n    \"description\": \"Updated description\",\n    \"is_active\": true\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/product-categories/{{categoryId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["product-categories", "{{categoryId}}"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Category updated successfully\",\n    \"data\": {\n        \"id\": \"550e8400-e29b-41d4-a716-446655440001\",\n        \"code\": \"ELEC\",\n        \"name\": \"Updated Electronics\",\n        \"description\": \"Updated description\",\n        \"is_active\": true,\n        \"updated_at\": \"2025-01-08T11:00:00Z\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Category",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/product-categories/{{categoryId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["product-categories", "{{categoryId}}"]
+						},
+						"description": "Delete a category (soft delete)"
+					},
+					"response": [
+						{
+							"name": "Delete Category Success - UAT Example",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/product-categories/{{categoryId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["product-categories", "{{categoryId}}"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Category deleted successfully\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Create Product",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"sku\": \"PROD-001\",\n    \"name\": \"Laptop Dell Inspiron 15\",\n    \"description\": \"Dell Inspiron 15 3000 Series Laptop\",\n    \"category_id\": \"550e8400-e29b-41d4-a716-446655440001\",\n    \"unit_price\": 999.99,\n    \"cost_price\": 750.00,\n    \"min_stock\": 10,\n    \"max_stock\": 100,\n    \"weight\": 2.5,\n    \"is_active\": true,\n    \"barcode\": \"1234567890123\",\n    \"attributes\": [\n        {\n            \"key\": \"color\",\n            \"value\": \"Silver\",\n            \"label\": \"Color\"\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products",
+							"host": ["{{baseUrl}}"],
+							"path": ["products"]
+						},
+						"description": "Create a new product"
+					},
+					"response": [
+						{
+							"name": "Create Product Success - UAT Example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"sku\": \"PROD-001\",\n    \"name\": \"Laptop Dell Inspiron 15\",\n    \"description\": \"Dell Inspiron 15 3000 Series Laptop\",\n    \"category_id\": \"550e8400-e29b-41d4-a716-446655440001\",\n    \"unit_price\": 999.99,\n    \"cost_price\": 750.00,\n    \"min_stock\": 10,\n    \"max_stock\": 100,\n    \"is_active\": true,\n    \"barcode\": \"1234567890123\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/products",
+									"host": ["{{baseUrl}}"],
+									"path": ["products"]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Product created successfully\",\n    \"data\": {\n        \"id\": \"550e8400-e29b-41d4-a716-446655440003\",\n        \"sku\": \"PROD-001\",\n        \"name\": \"Laptop Dell Inspiron 15\",\n        \"description\": \"Dell Inspiron 15 3000 Series Laptop\",\n        \"category_id\": \"550e8400-e29b-41d4-a716-446655440001\",\n        \"category_name\": \"Electronics\",\n        \"unit_price\": \"999.99\",\n        \"cost_price\": \"750.00\",\n        \"current_stock\": 0,\n        \"min_stock\": 10,\n        \"max_stock\": 100,\n        \"is_active\": true,\n        \"barcode\": \"1234567890123\",\n        \"stock_info\": {\n            \"total_available\": 0,\n            \"total_reserved\": 0,\n            \"total_on_hand\": 0,\n            \"low_stock_alert\": false\n        },\n        \"created_at\": \"2025-01-08T10:00:00Z\",\n        \"updated_at\": \"2025-01-08T10:00:00Z\"\n    }\n}"
+						},
+						{
+							"name": "Validation Error - Missing Required Fields - Unit Test",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"sku\": \"\",\n    \"name\": \"\",\n    \"category_id\": \"\",\n    \"unit_price\": -100\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/products",
+									"host": ["{{baseUrl}}"],
+									"path": ["products"]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Invalid product data\",\n    \"errors\": {\n        \"sku\": \"SKU is required and must be between 3 and 100 characters\",\n        \"name\": \"Name is required and must be between 3 and 200 characters\",\n        \"category_id\": \"Category ID is required\",\n        \"unit_price\": \"Unit price must be greater than or equal to 0\"\n    }\n}"
+						},
+						{
+							"name": "Validation Error - Min Stock > Max Stock - Unit Test",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"sku\": \"PROD-002\",\n    \"name\": \"Test Product\",\n    \"category_id\": \"550e8400-e29b-41d4-a716-446655440001\",\n    \"unit_price\": 100,\n    \"cost_price\": 50,\n    \"min_stock\": 100,\n    \"max_stock\": 10\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/products",
+									"host": ["{{baseUrl}}"],
+									"path": ["products"]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Invalid product data\",\n    \"errors\": {\n        \"min_stock\": \"Minimum stock cannot be greater than maximum stock\"\n    }\n}"
+						},
+						{
+							"name": "SKU Already Exists - Unit Test",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"sku\": \"PROD-001\",\n    \"name\": \"Duplicate Product\",\n    \"category_id\": \"550e8400-e29b-41d4-a716-446655440001\",\n    \"unit_price\": 100,\n    \"cost_price\": 50\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/products",
+									"host": ["{{baseUrl}}"],
+									"path": ["products"]
+								}
+							},
+							"status": "Conflict",
+							"code": 409,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"SKU already exists\",\n    \"errors\": {\n        \"sku\": \"Product SKU is already in use.\"\n    }\n}"
+						},
+						{
+							"name": "Category Not Found - Unit Test",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"sku\": \"PROD-003\",\n    \"name\": \"Test Product\",\n    \"category_id\": \"00000000-0000-0000-0000-000000000000\",\n    \"unit_price\": 100,\n    \"cost_price\": 50\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/products",
+									"host": ["{{baseUrl}}"],
+									"path": ["products"]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Product category not found\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products?page=1&limit=10&sort_by=name&sort_order=asc",
+							"host": ["{{baseUrl}}"],
+							"path": ["products"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "sort_by",
+									"value": "name"
+								},
+								{
+									"key": "sort_order",
+									"value": "asc"
+								}
+							]
+						},
+						"description": "Get paginated list of products"
+					},
+					"response": [
+						{
+							"name": "Get Products Success - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/products?page=1&limit=10",
+									"host": ["{{baseUrl}}"],
+									"path": ["products"],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Products retrieved successfully\",\n    \"data\": {\n        \"products\": [\n            {\n                \"id\": \"550e8400-e29b-41d4-a716-446655440003\",\n                \"sku\": \"PROD-001\",\n                \"name\": \"Laptop Dell Inspiron 15\",\n                \"category_name\": \"Electronics\",\n                \"unit_price\": \"999.99\",\n                \"current_stock\": 50,\n                \"min_stock\": 10,\n                \"max_stock\": 100,\n                \"is_active\": true\n            }\n        ],\n        \"pagination\": {\n            \"page\": 1,\n            \"limit\": 10,\n            \"total\": 1,\n            \"totalPages\": 1\n        }\n    }\n}"
+						},
+						{
+							"name": "Validation Error - Invalid Page - Unit Test",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/products?page=0&limit=1000",
+									"host": ["{{baseUrl}}"],
+									"path": ["products"],
+									"query": [
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "limit",
+											"value": "1000"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Invalid filter parameters\",\n    \"errors\": {\n        \"page\": \"Page must be greater than or equal to 1\",\n        \"limit\": \"Limit must be between 1 and 100\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Product by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products/{{productId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["products", "{{productId}}"]
+						},
+						"description": "Get product details by ID"
+					},
+					"response": [
+						{
+							"name": "Get Product Success - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/products/{{productId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["products", "{{productId}}"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Product retrieved successfully\",\n    \"data\": {\n        \"id\": \"550e8400-e29b-41d4-a716-446655440003\",\n        \"sku\": \"PROD-001\",\n        \"name\": \"Laptop Dell Inspiron 15\",\n        \"description\": \"Dell Inspiron 15 3000 Series Laptop\",\n        \"category_id\": \"550e8400-e29b-41d4-a716-446655440001\",\n        \"category_name\": \"Electronics\",\n        \"unit_price\": \"999.99\",\n        \"cost_price\": \"750.00\",\n        \"current_stock\": 50,\n        \"min_stock\": 10,\n        \"max_stock\": 100,\n        \"is_active\": true,\n        \"stock_info\": {\n            \"total_available\": 45,\n            \"total_reserved\": 5,\n            \"total_on_hand\": 50,\n            \"low_stock_alert\": false\n        },\n        \"created_at\": \"2025-01-08T10:00:00Z\",\n        \"updated_at\": \"2025-01-08T10:00:00Z\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Product",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Laptop Dell Inspiron 15 (Updated)\",\n    \"description\": \"Updated description\",\n    \"category_id\": \"550e8400-e29b-41d4-a716-446655440001\",\n    \"unit_price\": 1099.99,\n    \"cost_price\": 800.00,\n    \"min_stock\": 15,\n    \"max_stock\": 120,\n    \"is_active\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products/{{productId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["products", "{{productId}}"]
+						},
+						"description": "Update product details"
+					},
+					"response": [
+						{
+							"name": "Update Product Success - UAT Example",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Laptop Dell Inspiron 15 (Updated)\",\n    \"description\": \"Updated description\",\n    \"category_id\": \"550e8400-e29b-41d4-a716-446655440001\",\n    \"unit_price\": 1099.99,\n    \"cost_price\": 800.00,\n    \"min_stock\": 15,\n    \"max_stock\": 120,\n    \"is_active\": true\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/products/{{productId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["products", "{{productId}}"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Product updated successfully\",\n    \"data\": {\n        \"id\": \"550e8400-e29b-41d4-a716-446655440003\",\n        \"sku\": \"PROD-001\",\n        \"name\": \"Laptop Dell Inspiron 15 (Updated)\",\n        \"description\": \"Updated description\",\n        \"category_id\": \"550e8400-e29b-41d4-a716-446655440001\",\n        \"unit_price\": \"1099.99\",\n        \"cost_price\": \"800.00\",\n        \"min_stock\": 15,\n        \"max_stock\": 120,\n        \"is_active\": true,\n        \"updated_at\": \"2025-01-08T11:00:00Z\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Stock",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n    \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n    \"quantity\": 50,\n    \"type\": \"SET\",\n    \"reason\": \"Initial stock\",\n    \"notes\": \"Initial stock setup\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products/{{productId}}/stock",
+							"host": ["{{baseUrl}}"],
+							"path": ["products", "{{productId}}", "stock"]
+						},
+						"description": "Update product stock"
+					},
+					"response": [
+						{
+							"name": "Update Stock Success - UAT Example",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n    \"quantity\": 50,\n    \"type\": \"SET\",\n    \"reason\": \"Initial stock\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/products/{{productId}}/stock",
+									"host": ["{{baseUrl}}"],
+									"path": ["products", "{{productId}}", "stock"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Stock updated successfully\"\n}"
+						},
+						{
+							"name": "Insufficient Stock - Unit Test",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n    \"quantity\": 10,\n    \"type\": \"DECREMENT\",\n    \"reason\": \"Sale\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/products/{{productId}}/stock",
+									"host": ["{{baseUrl}}"],
+									"path": ["products", "{{productId}}", "stock"]
+								}
+							},
+							"status": "Conflict",
+							"code": 409,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Insufficient stock\",\n    \"errors\": {\n        \"quantity\": \"Insufficient stock available.\"\n    }\n}"
+						},
+						{
+							"name": "Invalid Stock Type - Unit Test",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n    \"quantity\": 10,\n    \"type\": \"INVALID_TYPE\",\n    \"reason\": \"Test\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/products/{{productId}}/stock",
+									"host": ["{{baseUrl}}"],
+									"path": ["products", "{{productId}}", "stock"]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Invalid stock operation\",\n    \"errors\": {\n        \"type\": \"Stock operation type must be INCREMENT, DECREMENT, or SET.\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Search Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products/search?query=laptop&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["products", "search"],
+							"query": [
+								{
+									"key": "query",
+									"value": "laptop"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Search products by name, SKU, or barcode"
+					},
+					"response": [
+						{
+							"name": "Search Products Success - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/products/search?query=laptop",
+									"host": ["{{baseUrl}}"],
+									"path": ["products", "search"],
+									"query": [
+										{
+											"key": "query",
+											"value": "laptop"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Search completed\",\n    \"data\": [\n        {\n            \"id\": \"550e8400-e29b-41d4-a716-446655440003\",\n            \"sku\": \"PROD-001\",\n            \"name\": \"Laptop Dell Inspiron 15\",\n            \"barcode\": \"1234567890123\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Low Stock Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products/low-stock",
+							"host": ["{{baseUrl}}"],
+							"path": ["products", "low-stock"]
+						},
+						"description": "Get products with stock below minimum threshold"
+					},
+					"response": [
+						{
+							"name": "Get Low Stock Products - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/products/low-stock",
+									"host": ["{{baseUrl}}"],
+									"path": ["products", "low-stock"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Low stock products retrieved\",\n    \"data\": [\n        {\n            \"id\": \"550e8400-e29b-41d4-a716-446655440004\",\n            \"sku\": \"PROD-002\",\n            \"name\": \"Wireless Mouse\",\n            \"current_stock\": 5,\n            \"min_stock\": 10,\n            \"category_name\": \"Electronics\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products/{{productId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["products", "{{productId}}"]
+						},
+						"description": "Delete a product (soft delete)"
+					},
+					"response": [
+						{
+							"name": "Delete Product Success - UAT Example",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/products/{{productId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["products", "{{productId}}"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Product deleted successfully\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Inventory",
+			"item": [
+				{
+					"name": "Create Stock Movement",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"movement_type\": \"IN\",\n    \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n    \"to_warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n    \"quantity\": 100,\n    \"unit_price\": 750.00,\n    \"notes\": \"Stock received from supplier\",\n    \"movement_date\": \"2025-01-08T10:00:00Z\",\n    \"batch_number\": \"BATCH-001\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/inventory/movements",
+							"host": ["{{baseUrl}}"],
+							"path": ["inventory", "movements"]
+						},
+						"description": "Create a new stock movement"
+					},
+					"response": [
+						{
+							"name": "Stock Movement Created - UAT Example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"movement_type\": \"IN\",\n    \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n    \"to_warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n    \"quantity\": 100,\n    \"unit_price\": 750.00,\n    \"notes\": \"Stock received from supplier\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/inventory/movements",
+									"host": ["{{baseUrl}}"],
+									"path": ["inventory", "movements"]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Stock movement created successfully\",\n    \"data\": {\n        \"id\": \"770e8400-e29b-41d4-a716-446655440001\",\n        \"movement_type\": \"IN\",\n        \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n        \"to_warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n        \"quantity\": 100,\n        \"reference_number\": \"MOV-2025-0001\",\n        \"created_at\": \"2025-01-08T10:00:00Z\"\n    }\n}"
+						},
+						{
+							"name": "Insufficient Stock for OUT Movement - Unit Test",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"movement_type\": \"OUT\",\n    \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n    \"from_warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n    \"quantity\": 1000,\n    \"unit_price\": 750.00,\n    \"notes\": \"Sale\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/inventory/movements",
+									"host": ["{{baseUrl}}"],
+									"path": ["inventory", "movements"]
+								}
+							},
+							"status": "Conflict",
+							"code": 409,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Insufficient stock\",\n    \"errors\": {\n        \"quantity\": \"Insufficient stock available.\"\n    }\n}"
+						},
+						{
+							"name": "Invalid Movement Type - Unit Test",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"movement_type\": \"INVALID\",\n    \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n    \"quantity\": 100\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/inventory/movements",
+									"host": ["{{baseUrl}}"],
+									"path": ["inventory", "movements"]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Invalid stock movement data\",\n    \"errors\": {\n        \"movement_type\": \"Movement type must be one of: IN, OUT, TRANSFER, ADJUSTMENT, OPNAME\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Transfer Stock",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"from_warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n    \"to_warehouse_id\": \"660e8400-e29b-41d4-a716-446655440002\",\n    \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n    \"quantity\": 20,\n    \"notes\": \"Transfer to secondary warehouse\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/inventory/transfer",
+							"host": ["{{baseUrl}}"],
+							"path": ["inventory", "transfer"]
+						},
+						"description": "Transfer stock between warehouses"
+					},
+					"response": [
+						{
+							"name": "Stock Transfer Success - UAT Example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"from_warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n    \"to_warehouse_id\": \"660e8400-e29b-41d4-a716-446655440002\",\n    \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n    \"quantity\": 20\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/inventory/transfer",
+									"host": ["{{baseUrl}}"],
+									"path": ["inventory", "transfer"]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Stock transfer completed\",\n    \"data\": {\n        \"id\": \"770e8400-e29b-41d4-a716-446655440002\",\n        \"movement_type\": \"TRANSFER\",\n        \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n        \"from_warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n        \"to_warehouse_id\": \"660e8400-e29b-41d4-a716-446655440002\",\n        \"quantity\": 20,\n        \"reference_number\": \"TRF-2025-0001\",\n        \"created_at\": \"2025-01-08T10:00:00Z\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Adjust Stock",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n    \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n    \"new_quantity\": 75,\n    \"reason\": \"Inventory count adjustment\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/inventory/adjustment",
+							"host": ["{{baseUrl}}"],
+							"path": ["inventory", "adjustment"]
+						},
+						"description": "Adjust stock quantity to a new value"
+					},
+					"response": [
+						{
+							"name": "Stock Adjustment Success - UAT Example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n    \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n    \"new_quantity\": 75,\n    \"reason\": \"Inventory count adjustment\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/inventory/adjustment",
+									"host": ["{{baseUrl}}"],
+									"path": ["inventory", "adjustment"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Stock adjustment completed\",\n    \"data\": {\n        \"id\": \"770e8400-e29b-41d4-a716-446655440003\",\n        \"movement_type\": \"ADJUSTMENT\",\n        \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n        \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n        \"previous_quantity\": 80,\n        \"new_quantity\": 75,\n        \"reference_number\": \"ADJ-2025-0001\",\n        \"created_at\": \"2025-01-08T10:00:00Z\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Perform Stock Opname",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n    \"opname_date\": \"2025-01-08T10:00:00Z\",\n    \"items\": [\n        {\n            \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n            \"system_qty\": 75,\n            \"physical_qty\": 72,\n            \"variance\": -3,\n            \"variance_notes\": \"Damaged items found\"\n        },\n        {\n            \"product_id\": \"550e8400-e29b-41d4-a716-446655440004\",\n            \"system_qty\": 50,\n            \"physical_qty\": 52,\n            \"variance\": 2,\n            \"variance_notes\": \"Found extra items\"\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/inventory/opname",
+							"host": ["{{baseUrl}}"],
+							"path": ["inventory", "opname"]
+						},
+						"description": "Perform physical stock count and reconciliation"
+					},
+					"response": [
+						{
+							"name": "Stock Opname Success - UAT Example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n    \"opname_date\": \"2025-01-08T10:00:00Z\",\n    \"items\": [\n        {\n            \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n            \"system_qty\": 75,\n            \"physical_qty\": 72,\n            \"variance\": -3\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/inventory/opname",
+									"host": ["{{baseUrl}}"],
+									"path": ["inventory", "opname"]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Stock opname completed\",\n    \"data\": [\n        {\n            \"id\": \"770e8400-e29b-41d4-a716-446655440004\",\n            \"movement_type\": \"OPNAME\",\n            \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n            \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n            \"quantity\": -3,\n            \"reference_number\": \"OPN-2025-0001\",\n            \"created_at\": \"2025-01-08T10:00:00Z\"\n        },\n        {\n            \"id\": \"770e8400-e29b-41d4-a716-446655440005\",\n            \"movement_type\": \"OPNAME\",\n            \"product_id\": \"550e8400-e29b-41d4-a716-446655440004\",\n            \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n            \"quantity\": 2,\n            \"reference_number\": \"OPN-2025-0002\",\n            \"created_at\": \"2025-01-08T10:00:00Z\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Stock Movements",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/inventory/movements?page=1&limit=10&movement_type=IN",
+							"host": ["{{baseUrl}}"],
+							"path": ["inventory", "movements"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "movement_type",
+									"value": "IN"
+								}
+							]
+						},
+						"description": "Get stock movements with filtering"
+					},
+					"response": [
+						{
+							"name": "Get Stock Movements - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/inventory/movements?page=1&limit=10",
+									"host": ["{{baseUrl}}"],
+									"path": ["inventory", "movements"],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Success get stock movements\",\n    \"data\": {\n        \"movements\": [\n            {\n                \"id\": \"770e8400-e29b-41d4-a716-446655440001\",\n                \"movement_type\": \"IN\",\n                \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n                \"product_name\": \"Laptop Dell Inspiron 15\",\n                \"quantity\": 100,\n                \"reference_number\": \"MOV-2025-0001\",\n                \"created_at\": \"2025-01-08T10:00:00Z\"\n            }\n        ],\n        \"pagination\": {\n            \"page\": 1,\n            \"limit\": 10,\n            \"total\": 1,\n            \"totalPages\": 1\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Stock Summary",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/inventory/summary",
+							"host": ["{{baseUrl}}"],
+							"path": ["inventory", "summary"]
+						},
+						"description": "Get overall stock summary across all warehouses"
+					},
+					"response": [
+						{
+							"name": "Get Stock Summary - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/inventory/summary",
+									"host": ["{{baseUrl}}"],
+									"path": ["inventory", "summary"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Success get stock summary\",\n    \"data\": {\n        \"total_products\": 100,\n        \"total_warehouses\": 5,\n        \"total_value\": \"1500000.00\",\n        \"low_stock_count\": 3,\n        \"out_of_stock_count\": 1,\n        \"by_warehouse\": [\n            {\n                \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n                \"warehouse_name\": \"Main Warehouse\",\n                \"total_products\": 50,\n                \"total_quantity\": 5000,\n                \"total_value\": \"750000.00\"\n            }\n        ]\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Low Stock Alerts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/inventory/alerts/low-stock",
+							"host": ["{{baseUrl}}"],
+							"path": ["inventory", "alerts", "low-stock"]
+						},
+						"description": "Get products with stock below minimum threshold"
+					},
+					"response": [
+						{
+							"name": "Get Low Stock Alerts - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/inventory/alerts/low-stock",
+									"host": ["{{baseUrl}}"],
+									"path": ["inventory", "alerts", "low-stock"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Success get low stock alerts\",\n    \"data\": [\n        {\n            \"product_id\": \"550e8400-e29b-41d4-a716-446655440004\",\n            \"product_name\": \"Wireless Mouse\",\n            \"sku\": \"PROD-002\",\n            \"current_stock\": 5,\n            \"min_stock\": 10,\n            \"warehouse_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n            \"warehouse_name\": \"Main Warehouse\",\n            \"alert_date\": \"2025-01-08T10:00:00Z\"\n        }\n    ]\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Purchase Orders",
+			"item": [
+				{
+					"name": "Create Purchase Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"supplier_id\": \"770e8400-e29b-41d4-a716-446655440001\",\n    \"order_date\": \"2025-01-08T10:00:00Z\",\n    \"expected_delivery_date\": \"2025-01-15T10:00:00Z\",\n    \"items\": [\n        {\n            \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n            \"quantity\": 50,\n            \"unit_price\": 750.00,\n            \"notes\": \"50 units of laptops\"\n        }\n    ],\n    \"notes\": \"Bulk order for Q1\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/purchase-order",
+							"host": ["{{baseUrl}}"],
+							"path": ["purchase-order"]
+						},
+						"description": "Create a new purchase order"
+					},
+					"response": [
+						{
+							"name": "Create Purchase Order Success - UAT Example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"supplier_id\": \"770e8400-e29b-41d4-a716-446655440001\",\n    \"order_date\": \"2025-01-08T10:00:00Z\",\n    \"items\": [\n        {\n            \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n            \"quantity\": 50,\n            \"unit_price\": 750.00\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/purchase-order",
+									"host": ["{{baseUrl}}"],
+									"path": ["purchase-order"]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"PurchaseOrder\",\n    \"data\": {\n        \"id\": \"880e8400-e29b-41d4-a716-446655440001\",\n        \"order_number\": \"PO-2025-0001\",\n        \"supplier_id\": \"770e8400-e29b-41d4-a716-446655440001\",\n        \"supplier_name\": \"Tech Supplies Inc\",\n        \"status\": \"PENDING\",\n        \"order_date\": \"2025-01-08T10:00:00Z\",\n        \"total_amount\": \"37500.00\",\n        \"items\": [\n            {\n                \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n                \"product_name\": \"Laptop Dell Inspiron 15\",\n                \"quantity\": 50,\n                \"unit_price\": \"750.00\",\n                \"subtotal\": \"37500.00\"\n            }\n        ],\n        \"created_at\": \"2025-01-08T10:00:00Z\",\n        \"updated_at\": \"2025-01-08T10:00:00Z\"\n    }\n}"
+						},
+						{
+							"name": "Validation Error - Empty Items - Unit Test",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"supplier_id\": \"770e8400-e29b-41d4-a716-446655440001\",\n    \"order_date\": \"2025-01-08T10:00:00Z\",\n    \"items\": []\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/purchase-order",
+									"host": ["{{baseUrl}}"],
+									"path": ["purchase-order"]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Validation failed\",\n    \"errors\": {\n        \"items\": \"At least one item is required\"\n    }\n}"
+						},
+						{
+							"name": "Validation Error - Invalid Quantity - Unit Test",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"supplier_id\": \"770e8400-e29b-41d4-a716-446655440001\",\n    \"order_date\": \"2025-01-08T10:00:00Z\",\n    \"items\": [\n        {\n            \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n            \"quantity\": 0,\n            \"unit_price\": 750.00\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/purchase-order",
+									"host": ["{{baseUrl}}"],
+									"path": ["purchase-order"]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Validation failed\",\n    \"errors\": {\n        \"items[0].quantity\": \"Quantity must be at least 1\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Purchase Orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/purchase-order?page=1&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["purchase-order"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Get all purchase orders"
+					},
+					"response": [
+						{
+							"name": "Get Purchase Orders - UAT Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/purchase-order?page=1&limit=10",
+									"host": ["{{baseUrl}}"],
+									"path": ["purchase-order"],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Success get all purchase orders\",\n    \"data\": {\n        \"data\": [\n            {\n                \"id\": \"880e8400-e29b-41d4-a716-446655440001\",\n                \"order_number\": \"PO-2025-0001\",\n                \"supplier_name\": \"Tech Supplies Inc\",\n                \"status\": \"PENDING\",\n                \"total_amount\": \"37500.00\",\n                \"order_date\": \"2025-01-08T10:00:00Z\"\n            }\n        ],\n        \"total\": 1\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Approve Purchase Order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/purchase-order/{{purchaseOrderId}}/approve",
+							"host": ["{{baseUrl}}"],
+							"path": ["purchase-order", "{{purchaseOrderId}}", "approve"]
+						},
+						"description": "Approve a purchase order"
+					},
+					"response": [
+						{
+							"name": "Approve Purchase Order Success - UAT Example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/purchase-order/{{purchaseOrderId}}/approve",
+									"host": ["{{baseUrl}}"],
+									"path": ["purchase-order", "{{purchaseOrderId}}", "approve"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Purchase order approved successfully\",\n    \"data\": {\n        \"id\": \"880e8400-e29b-41d4-a716-446655440001\",\n        \"order_number\": \"PO-2025-0001\",\n        \"status\": \"APPROVED\",\n        \"approved_by\": \"admin@example.com\",\n        \"approved_at\": \"2025-01-08T11:00:00Z\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Cancel Purchase Order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/purchase-order/{{purchaseOrderId}}/cancel",
+							"host": ["{{baseUrl}}"],
+							"path": ["purchase-order", "{{purchaseOrderId}}", "cancel"]
+						},
+						"description": "Cancel a purchase order"
+					},
+					"response": [
+						{
+							"name": "Cancel Purchase Order Success - UAT Example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/purchase-order/{{purchaseOrderId}}/cancel",
+									"host": ["{{baseUrl}}"],
+									"path": ["purchase-order", "{{purchaseOrderId}}", "cancel"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": true,\n    \"message\": \"Purchase order cancelled successfully\",\n    \"data\": {\n        \"id\": \"880e8400-e29b-41d4-a716-446655440001\",\n        \"order_number\": \"PO-2025-0001\",\n        \"status\": \"CANCELLED\",\n        \"cancelled_by\": \"admin@example.com\",\n        \"cancelled_at\": \"2025-01-08T11:00:00Z\"\n    }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Test Scenarios - Unit Testing",
+			"item": [
+				{
+					"name": "Validation - Required Fields",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products",
+							"host": ["{{baseUrl}}"],
+							"path": ["products"]
+						},
+						"description": "Test validation for missing required fields"
+					},
+					"response": [
+						{
+							"name": "All Fields Empty - Expected Validation Errors",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/products",
+									"host": ["{{baseUrl}}"],
+									"path": ["products"]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Invalid product data\",\n    \"errors\": {\n        \"sku\": \"SKU is required\",\n        \"name\": \"Name is required\",\n        \"category_id\": \"Category ID is required\",\n        \"unit_price\": \"Unit price is required\",\n        \"cost_price\": \"Cost price is required\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Validation - String Length",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"sku\": \"AB\",\n    \"name\": \"A\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/product-categories",
+							"host": ["{{baseUrl}}"],
+							"path": ["product-categories"]
+						},
+						"description": "Test validation for string length constraints"
+					},
+					"response": [
+						{
+							"name": "String Too Short - Expected Validation Errors",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"sku\": \"AB\",\n    \"name\": \"A\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/product-categories",
+									"host": ["{{baseUrl}}"],
+									"path": ["product-categories"]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Invalid category data\",\n    \"errors\": {\n        \"code\": \"Code must be at least 2 characters\",\n        \"name\": \"Name must be at least 2 characters\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Validation - Numeric Range",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"sku\": \"TEST-001\",\n    \"name\": \"Test Product\",\n    \"category_id\": \"550e8400-e29b-41d4-a716-446655440001\",\n    \"unit_price\": -50,\n    \"min_stock\": 200,\n    \"max_stock\": 50\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products",
+							"host": ["{{baseUrl}}"],
+							"path": ["products"]
+						},
+						"description": "Test validation for numeric range constraints"
+					},
+					"response": [
+						{
+							"name": "Invalid Numeric Values - Expected Validation Errors",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"sku\": \"TEST-001\",\n    \"name\": \"Test Product\",\n    \"category_id\": \"550e8400-e29b-41d4-a716-446655440001\",\n    \"unit_price\": -50,\n    \"min_stock\": 200,\n    \"max_stock\": 50\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/products",
+									"host": ["{{baseUrl}}"],
+									"path": ["products"]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Invalid product data\",\n    \"errors\": {\n        \"unit_price\": \"Price must be greater than or equal to 0\",\n        \"min_stock\": \"Minimum stock cannot be greater than maximum stock\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Validation - UUID Format",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Test Category\",\n    \"is_active\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/product-categories/not-a-valid-uuid",
+							"host": ["{{baseUrl}}"],
+							"path": ["product-categories", "not-a-valid-uuid"]
+						},
+						"description": "Test validation for UUID format"
+					},
+					"response": [
+						{
+							"name": "Invalid UUID Format - Expected Error",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Test Category\",\n    \"is_active\": true\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/product-categories/not-a-valid-uuid",
+									"host": ["{{baseUrl}}"],
+									"path": ["product-categories", "not-a-valid-uuid"]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Invalid category ID\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Validation - Email Format",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"SUP-001\",\n    \"name\": \"Test Supplier\",\n    \"email\": \"invalid-email\",\n    \"is_active\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/suppliers",
+							"host": ["{{baseUrl}}"],
+							"path": ["suppliers"]
+						},
+						"description": "Test validation for email format"
+					},
+					"response": [
+						{
+							"name": "Invalid Email Format - Expected Validation Error",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"SUP-001\",\n    \"name\": \"Test Supplier\",\n    \"email\": \"invalid-email\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/suppliers",
+									"host": ["{{baseUrl}}"],
+									"path": ["suppliers"]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Validation failed\",\n    \"errors\": {\n        \"email\": \"Invalid email format\"\n    }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Test Scenarios - UAT",
+			"item": [
+				{
+					"name": "Happy Path - Complete Product Lifecycle",
+					"item": [
+						{
+							"name": "1. Create Category",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"UAT-CAT-001\",\n    \"name\": \"UAT Electronics Category\",\n    \"description\": \"Category for UAT testing\",\n    \"is_active\": true\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/product-categories",
+									"host": ["{{baseUrl}}"],
+									"path": ["product-categories"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2. Create Product",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"sku\": \"UAT-PROD-001\",\n    \"name\": \"UAT Test Product\",\n    \"description\": \"Product created during UAT testing\",\n    \"category_id\": \"{{categoryId}}\",\n    \"unit_price\": 199.99,\n    \"cost_price\": 100.00,\n    \"min_stock\": 5,\n    \"max_stock\": 50,\n    \"is_active\": true\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/products",
+									"host": ["{{baseUrl}}"],
+									"path": ["products"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3. Set Initial Stock",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"warehouse_id\": \"{{warehouseId}}\",\n    \"quantity\": 25,\n    \"type\": \"SET\",\n    \"reason\": \"Initial UAT stock\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/products/{{productId}}/stock",
+									"host": ["{{baseUrl}}"],
+									"path": ["products", "{{productId}}", "stock"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4. Verify Stock",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/products/{{productId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["products", "{{productId}}"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "5. Create Stock Movement (OUT)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"movement_type\": \"OUT\",\n    \"product_id\": \"{{productId}}\",\n    \"from_warehouse_id\": \"{{warehouseId}}\",\n    \"quantity\": 5,\n    \"unit_price\": 199.99,\n    \"notes\": \"Sale during UAT\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/inventory/movements",
+									"host": ["{{baseUrl}}"],
+									"path": ["inventory", "movements"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "6. Check Low Stock Alert",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/products/low-stock",
+									"host": ["{{baseUrl}}"],
+									"path": ["products", "low-stock"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "7. Delete Product",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/products/{{productId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["products", "{{productId}}"]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Happy Path - Complete Purchase Order Flow",
+					"item": [
+						{
+							"name": "1. Create Purchase Order",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"supplier_id\": \"770e8400-e29b-41d4-a716-446655440001\",\n    \"order_date\": \"2025-01-08T10:00:00Z\",\n    \"expected_delivery_date\": \"2025-01-15T10:00:00Z\",\n    \"items\": [\n        {\n            \"product_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n            \"quantity\": 100,\n            \"unit_price\": 750.00\n        }\n    ],\n    \"notes\": \"UAT Purchase Order\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/purchase-order",
+									"host": ["{{baseUrl}}"],
+									"path": ["purchase-order"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2. Approve Purchase Order",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/purchase-order/{{purchaseOrderId}}/approve",
+									"host": ["{{baseUrl}}"],
+									"path": ["purchase-order", "{{purchaseOrderId}}", "approve"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3. Receive Goods (Goods Receipt)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"purchase_order_id\": \"{{purchaseOrderId}}\",\n    \"warehouse_id\": \"{{warehouseId}}\",\n    \"receipt_date\": \"2025-01-15T10:00:00Z\",\n    \"items\": [\n        {\n            \"purchase_order_item_id\": \"990e8400-e29b-41d4-a716-446655440001\",\n            \"received_qty\": 100,\n            \"batch_number\": \"BATCH-UAT-001\"\n        }\n    ],\n    \"notes\": \"Goods received during UAT\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/goods-receipt",
+									"host": ["{{baseUrl}}"],
+									"path": ["goods-receipt"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4. Verify Stock Updated",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/inventory/product/550e8400-e29b-41d4-a716-446655440003",
+									"host": ["{{baseUrl}}"],
+									"path": ["inventory", "product", "550e8400-e29b-41d4-a716-446655440003"]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}
