@@ -5,6 +5,9 @@ import (
 	"api-jellyfish/internal/entity"
 	"context"
 	"errors"
+	"fmt"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -38,10 +41,10 @@ func (r *GoodsReceiptRepository) Create(ctx context.Context, receipt *entity.Goo
 	query := `
 		INSERT INTO goods_receipts (
 			id, gr_number, purchase_order_id, warehouse_id, receipt_date, status,
-			notes, received_by, created_by, updated_by, created_at, updated_at
+			notes, received_by, approved_by, created_at, updated_at
 		) VALUES (
 			:id, :gr_number, :purchase_order_id, :warehouse_id, :receipt_date, :status,
-			:notes, :received_by, :created_by, :updated_by, :created_at, :updated_at
+			:notes, :received_by, :approved_by, :created_at, :updated_at
 		)`
 	_, err := r.db.NamedExecContext(ctx, query, receipt)
 	return err
@@ -84,7 +87,7 @@ func (r *GoodsReceiptRepository) FindByPurchaseOrderID(ctx context.Context, purc
 func (r *GoodsReceiptRepository) Update(ctx context.Context, id uuid.UUID, receipt *entity.GoodsReceipt) error {
 	query := `
 		UPDATE goods_receipts
-		SET status = :status, notes = :notes, updated_by = :updated_by, updated_at = :updated_at
+		SET status = :status, notes = :notes, updated_at = :updated_at
 		WHERE id = :id`
 	receipt.ID = id
 	_, err := r.db.NamedExecContext(ctx, query, receipt)
@@ -99,6 +102,25 @@ func (r *GoodsReceiptRepository) GetItemsByReceiptID(ctx context.Context, receip
 }
 
 func (r *GoodsReceiptRepository) GetNextGRNumber(ctx context.Context) (string, error) {
+	var lastNumber string
+	query := `SELECT gr_number FROM goods_receipts 
+	          WHERE gr_number LIKE 'GR-' || to_char(CURRENT_DATE, 'YYYYMMDD') || '-%' 
+	          ORDER BY gr_number DESC LIMIT 1`
+
+	err := r.db.GetContext(ctx, &lastNumber, query)
+	if err != nil {
+		return "GR-" + time.Now().Format("20060102") + "-0001", nil
+	}
+
+	// Extract the sequence number and increment
+	parts := strings.Split(lastNumber, "-")
+	if len(parts) == 3 {
+		seq, err := strconv.Atoi(parts[2])
+		if err == nil {
+			return fmt.Sprintf("GR-%s-%04d", time.Now().Format("20060102"), seq+1), nil
+		}
+	}
+
 	return "GR-" + time.Now().Format("20060102") + "-0001", nil
 }
 
@@ -114,10 +136,10 @@ func (r *GoodsReceiptRepository) CreateTx(ctx context.Context, tx interface{}, r
 	query := `
 		INSERT INTO goods_receipts (
 			id, gr_number, purchase_order_id, warehouse_id, receipt_date, status,
-			notes, received_by, created_by, updated_by, created_at, updated_at
+			notes, received_by, approved_by, created_at, updated_at
 		) VALUES (
 			:id, :gr_number, :purchase_order_id, :warehouse_id, :receipt_date, :status,
-			:notes, :received_by, :created_by, :updated_by, :created_at, :updated_at
+			:notes, :received_by, :approved_by, :created_at, :updated_at
 		)`
 	_, err := sqlxTx.NamedExecContext(ctx, query, receipt)
 	return err
@@ -147,7 +169,7 @@ func (r *GoodsReceiptRepository) UpdateTx(ctx context.Context, tx interface{}, i
 	}
 	query := `
 		UPDATE goods_receipts
-		SET status = :status, notes = :notes, updated_by = :updated_by, updated_at = :updated_at
+		SET status = :status, notes = :notes, updated_at = :updated_at
 		WHERE id = :id`
 	receipt.ID = id
 	_, err := sqlxTx.NamedExecContext(ctx, query, receipt)

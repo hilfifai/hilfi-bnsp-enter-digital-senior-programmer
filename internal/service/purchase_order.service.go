@@ -151,6 +151,15 @@ func (s *PurchaseOrderService) GetPurchaseOrders(ctx context.Context, filter dto
 		return nil, 0, fmt.Errorf("failed to get purchase orders: %w", err)
 	}
 
+	// Fetch items for each order
+	for i := range orders {
+		items, err := s.purchaseOrderRepo.GetItemsByOrderID(ctx, orders[i].ID)
+		if err != nil {
+			return nil, 0, fmt.Errorf("failed to fetch purchase order items: %w", err)
+		}
+		orders[i].Items = items
+	}
+
 	return orders, len(orders), nil
 }
 

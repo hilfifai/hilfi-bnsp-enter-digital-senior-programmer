@@ -5,6 +5,8 @@ import (
 	"api-jellyfish/internal/entity"
 	"context"
 	"fmt"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -53,10 +55,10 @@ func (r *PurchaseOrderRepository) CreateItem(ctx context.Context, item *entity.P
 	query := `
 		INSERT INTO purchase_order_items (
 			id, purchase_order_id, product_id, quantity, unit_price, total_price,
-			received_qty, remaining_qty, notes, created_at, updated_at
+			received_qty, notes, created_at, updated_at
 		) VALUES (
 			:id, :purchase_order_id, :product_id, :quantity, :unit_price, :total_price,
-			:received_qty, :remaining_qty, :notes, :created_at, :updated_at
+			:received_qty, :notes, :created_at, :updated_at
 		)`
 	_, err := r.db.NamedExecContext(ctx, query, item)
 	return err
@@ -120,6 +122,25 @@ func (r *PurchaseOrderRepository) GetItemsByOrderID(ctx context.Context, orderID
 }
 
 func (r *PurchaseOrderRepository) GetNextPONumber(ctx context.Context) (string, error) {
+	var lastNumber string
+	query := `SELECT po_number FROM purchase_orders 
+	          WHERE po_number LIKE 'PO-' || to_char(CURRENT_DATE, 'YYYYMMDD') || '-%' 
+	          ORDER BY po_number DESC LIMIT 1`
+
+	err := r.db.GetContext(ctx, &lastNumber, query)
+	if err != nil {
+		return "PO-" + time.Now().Format("20060102") + "-0001", nil
+	}
+
+	// Extract the sequence number and increment
+	parts := strings.Split(lastNumber, "-")
+	if len(parts) == 3 {
+		seq, err := strconv.Atoi(parts[2])
+		if err == nil {
+			return fmt.Sprintf("PO-%s-%04d", time.Now().Format("20060102"), seq+1), nil
+		}
+	}
+
 	return "PO-" + time.Now().Format("20060102") + "-0001", nil
 }
 
@@ -140,7 +161,7 @@ func (r *PurchaseOrderRepository) FindItemByID(ctx context.Context, id uuid.UUID
 func (r *PurchaseOrderRepository) UpdateItem(ctx context.Context, id uuid.UUID, item *entity.PurchaseOrderItem) error {
 	query := `
 		UPDATE purchase_order_items
-		SET received_qty = :received_qty, remaining_qty = :remaining_qty, updated_at = :updated_at
+		SET received_qty = :received_qty, updated_at = :updated_at
 		WHERE id = :id`
 	item.ID = id
 	_, err := r.db.NamedExecContext(ctx, query, item)
