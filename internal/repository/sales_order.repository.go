@@ -324,10 +324,13 @@ func (r *SalesOrderRepository) GetSalesReport(ctx context.Context, filter dto.Sa
 
 func (r *SalesOrderRepository) GetSalesSummary(ctx context.Context, startDate, endDate time.Time) (*entity.ProfitLossReport, error) {
 	var report entity.ProfitLossReport
+	// Convert dates to string format for PostgreSQL to avoid type inference issues
+	startDateStr := startDate.Format("2006-01-02")
+	endDateStr := endDate.Format("2006-01-02")
 	query := `
 		SELECT 
-			$1 as start_date,
-			$2 as end_date,
+			$1::date as start_date,
+			$2::date as end_date,
 			COALESCE(SUM(so.total_amount), 0) as total_sales,
 			COALESCE(SUM(soi.quantity * p.cost_price), 0) as total_cost,
 			COALESCE(SUM(so.total_amount) - SUM(soi.quantity * p.cost_price), 0) as gross_profit,
@@ -341,9 +344,9 @@ func (r *SalesOrderRepository) GetSalesSummary(ctx context.Context, startDate, e
 		FROM sales_orders so
 		LEFT JOIN sales_order_items soi ON so.id = soi.sales_order_id
 		LEFT JOIN products p ON soi.product_id = p.id
-		WHERE so.order_date >= $1 AND so.order_date <= $2 AND so.status NOT IN ('DRAFT', 'CANCELLED')
+		WHERE so.order_date >= $1::date AND so.order_date <= $2::date AND so.status NOT IN ('DRAFT', 'CANCELLED')
 	`
-	err := r.db.GetContext(ctx, &report, query, startDate, endDate)
+	err := r.db.GetContext(ctx, &report, query, startDateStr, endDateStr)
 	return &report, err
 }
 

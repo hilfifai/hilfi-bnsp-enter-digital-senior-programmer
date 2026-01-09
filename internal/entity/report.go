@@ -27,13 +27,13 @@ type StockReport struct {
 
 type SalesReport struct {
 	Period        string          `json:"period"` // Daily, Weekly, Monthly
-	Date          time.Time       `json:"date"`
-	TotalOrders   int             `json:"total_orders"`
-	TotalQuantity int             `json:"total_quantity"`
-	TotalSales    decimal.Decimal `json:"total_sales"`
-	TotalCost     decimal.Decimal `json:"total_cost"`
-	TotalProfit   decimal.Decimal `json:"total_profit"`
-	AverageOrder  decimal.Decimal `json:"average_order"`
+	Date          time.Time       `db:"date" json:"date"`
+	TotalOrders   int             `db:"total_orders" json:"total_orders"`
+	TotalQuantity int             `db:"total_quantity" json:"total_quantity"`
+	TotalSales    decimal.Decimal `db:"total_sales" json:"total_sales"`
+	TotalCost     decimal.Decimal `db:"total_cost" json:"total_cost"`
+	TotalProfit   decimal.Decimal `db:"total_profit" json:"total_profit"`
+	AverageOrder  decimal.Decimal `db:"average_order" json:"average_order"`
 	TopProduct    *string         `json:"top_product,omitempty"`
 	TopCustomer   *string         `json:"top_customer,omitempty"`
 }
@@ -84,25 +84,25 @@ type InventoryOverview struct {
 
 // ProfitLossReport represents profit and loss report
 type ProfitLossReport struct {
-	Period       string          `json:"period"`
-	StartDate    time.Time       `json:"start_date"`
-	EndDate      time.Time       `json:"end_date"`
-	TotalSales   decimal.Decimal `json:"total_sales"`
-	TotalCost    decimal.Decimal `json:"total_cost"`
-	GrossProfit  decimal.Decimal `json:"gross_profit"`
-	Expenses     decimal.Decimal `json:"expenses"`
-	NetProfit    decimal.Decimal `json:"net_profit"`
-	ProfitMargin decimal.Decimal `json:"profit_margin"`
+	Period       string          `db:"period" json:"period"`
+	StartDate    time.Time       `db:"start_date" json:"start_date"`
+	EndDate      time.Time       `db:"end_date" json:"end_date"`
+	TotalSales   decimal.Decimal `db:"total_sales" json:"total_sales"`
+	TotalCost    decimal.Decimal `db:"total_cost" json:"total_cost"`
+	GrossProfit  decimal.Decimal `db:"gross_profit" json:"gross_profit"`
+	Expenses     decimal.Decimal `db:"expenses" json:"expenses"`
+	NetProfit    decimal.Decimal `db:"net_profit" json:"net_profit"`
+	ProfitMargin decimal.Decimal `db:"profit_margin" json:"profit_margin"`
 }
 
 // TopProduct represents top selling products
 type TopProduct struct {
-	ProductID     uuid.UUID       `json:"product_id"`
-	ProductSKU    string          `json:"product_sku"`
-	ProductName   string          `json:"product_name"`
-	TotalQuantity int             `json:"total_quantity"`
-	TotalRevenue  decimal.Decimal `json:"total_revenue"`
-	TotalProfit   decimal.Decimal `json:"total_profit"`
-	OrderCount    int             `json:"order_count"`
-	AveragePrice  decimal.Decimal `json:"average_price"`
+	ProductID     uuid.UUID       `db:"product_id" json:"product_id"`
+	ProductSKU    string          `db:"product_sku" json:"product_sku"`
+	ProductName   string          `db:"product_name" json:"product_name"`
+	TotalQuantity int             `db:"total_quantity" json:"total_quantity"`
+	TotalRevenue  decimal.Decimal `db:"total_revenue" json:"total_revenue"`
+	TotalProfit   decimal.Decimal `db:"total_profit" json:"total_profit"`
+	OrderCount    int             `db:"order_count" json:"order_count"`
+	AveragePrice  decimal.Decimal `db:"average_price" json:"average_price"`
 }

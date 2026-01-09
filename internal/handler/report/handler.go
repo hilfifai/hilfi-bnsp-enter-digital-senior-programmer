@@ -7,9 +7,11 @@ import (
 	"api-jellyfish/internal/pkg/logger/v2"
 	"api-jellyfish/internal/service"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type IHandler interface {
@@ -49,10 +51,33 @@ func (h *Handler) GetStockReport(c *gin.Context) {
 	log := logger.FromContext(ctx)
 
 	var filter dto.StockReportFilter
-	if err := c.ShouldBindQuery(&filter); err != nil {
-		log.Error().Err(err).Msg("Failed to bind query parameters")
-		helper.APIBindingError(c, err)
-		return
+
+	// Handle warehouse_id manually to support both single UUID and array format
+	if warehouseIDStr := c.Query("warehouse_id"); warehouseIDStr != "" {
+		// Remove [] brackets if present
+		warehouseIDStr = strings.TrimPrefix(warehouseIDStr, "[")
+		warehouseIDStr = strings.TrimSuffix(warehouseIDStr, "]")
+		if warehouseID, err := uuid.Parse(warehouseIDStr); err == nil {
+			filter.WarehouseID = &warehouseID
+		}
+	}
+
+	// Handle category_id manually
+	if categoryIDStr := c.Query("category_id"); categoryIDStr != "" {
+		categoryIDStr = strings.TrimPrefix(categoryIDStr, "[")
+		categoryIDStr = strings.TrimSuffix(categoryIDStr, "]")
+		if categoryID, err := uuid.Parse(categoryIDStr); err == nil {
+			filter.CategoryID = &categoryID
+		}
+	}
+
+	// Handle product_id manually
+	if productIDStr := c.Query("product_id"); productIDStr != "" {
+		productIDStr = strings.TrimPrefix(productIDStr, "[")
+		productIDStr = strings.TrimSuffix(productIDStr, "]")
+		if productID, err := uuid.Parse(productIDStr); err == nil {
+			filter.ProductID = &productID
+		}
 	}
 
 	report, err := h.Service.GetStockReport(ctx, filter)
@@ -83,10 +108,39 @@ func (h *Handler) GetSalesReport(c *gin.Context) {
 	log := logger.FromContext(ctx)
 
 	var filter dto.SalesReportFilter
-	if err := c.ShouldBindQuery(&filter); err != nil {
-		log.Error().Err(err).Msg("Failed to bind query parameters")
-		helper.APIBindingError(c, err)
-		return
+
+	// Handle start_date manually to support date-only format
+	if startDateStr := c.Query("start_date"); startDateStr != "" {
+		startDate, err := time.Parse("2006-01-02", startDateStr)
+		if err == nil {
+			filter.StartDate = &startDate
+		}
+	}
+
+	// Handle end_date manually to support date-only format
+	if endDateStr := c.Query("end_date"); endDateStr != "" {
+		endDate, err := time.Parse("2006-01-02", endDateStr)
+		if err == nil {
+			filter.EndDate = &endDate
+		}
+	}
+
+	// Handle customer_id manually
+	if customerIDStr := c.Query("customer_id"); customerIDStr != "" {
+		customerIDStr = strings.TrimPrefix(customerIDStr, "[")
+		customerIDStr = strings.TrimSuffix(customerIDStr, "]")
+		if customerID, err := uuid.Parse(customerIDStr); err == nil {
+			filter.CustomerID = &customerID
+		}
+	}
+
+	// Handle product_id manually
+	if productIDStr := c.Query("product_id"); productIDStr != "" {
+		productIDStr = strings.TrimPrefix(productIDStr, "[")
+		productIDStr = strings.TrimSuffix(productIDStr, "]")
+		if productID, err := uuid.Parse(productIDStr); err == nil {
+			filter.ProductID = &productID
+		}
 	}
 
 	report, err := h.Service.GetSalesReport(ctx, filter)
@@ -250,10 +304,44 @@ func (h *Handler) GetMovementReport(c *gin.Context) {
 	log := logger.FromContext(ctx)
 
 	var filter dto.MovementReportFilter
-	if err := c.ShouldBindQuery(&filter); err != nil {
-		log.Error().Err(err).Msg("Failed to bind query parameters")
-		helper.APIBindingError(c, err)
-		return
+
+	// Handle start_date manually to support date-only format
+	if startDateStr := c.Query("start_date"); startDateStr != "" {
+		startDate, err := time.Parse("2006-01-02", startDateStr)
+		if err == nil {
+			filter.StartDate = &startDate
+		}
+	}
+
+	// Handle end_date manually to support date-only format
+	if endDateStr := c.Query("end_date"); endDateStr != "" {
+		endDate, err := time.Parse("2006-01-02", endDateStr)
+		if err == nil {
+			filter.EndDate = &endDate
+		}
+	}
+
+	// Handle warehouse_id manually
+	if warehouseIDStr := c.Query("warehouse_id"); warehouseIDStr != "" {
+		warehouseIDStr = strings.TrimPrefix(warehouseIDStr, "[")
+		warehouseIDStr = strings.TrimSuffix(warehouseIDStr, "]")
+		if warehouseID, err := uuid.Parse(warehouseIDStr); err == nil {
+			filter.WarehouseID = &warehouseID
+		}
+	}
+
+	// Handle product_id manually
+	if productIDStr := c.Query("product_id"); productIDStr != "" {
+		productIDStr = strings.TrimPrefix(productIDStr, "[")
+		productIDStr = strings.TrimSuffix(productIDStr, "]")
+		if productID, err := uuid.Parse(productIDStr); err == nil {
+			filter.ProductID = &productID
+		}
+	}
+
+	// Handle movement_type manually
+	if movementType := c.Query("movement_type"); movementType != "" {
+		filter.MovementType = &movementType
 	}
 
 	if filter.Page == 0 {

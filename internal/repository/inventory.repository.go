@@ -90,7 +90,7 @@ func (r *InventoryRepository) GetStockSummary(ctx context.Context, warehouseID u
 		FROM products p
 		LEFT JOIN product_stocks ps ON p.id = ps.product_id AND ps.warehouse_id = $1
 		LEFT JOIN product_categories pc ON p.category_id = pc.id
-		WHERE p.deleted_at IS NULL
+		WHERE p.is_active = true
 		ORDER BY p.name
 	`
 
@@ -147,7 +147,7 @@ func (r *InventoryRepository) GetWarehouseStockValue(ctx context.Context, wareho
 		SELECT COALESCE(SUM(ps.available * p.cost), 0) as total_value
 		FROM product_stocks ps
 		JOIN products p ON ps.product_id = p.id
-		WHERE ps.warehouse_id = $1 AND p.deleted_at IS NULL
+		WHERE ps.warehouse_id = $1 AND p.is_active = true
 	`
 
 	var totalValue float64
@@ -330,7 +330,7 @@ func (r *InventoryRepository) GetStockReport(ctx context.Context, filter dto.Sto
 		LEFT JOIN inventory_stocks istok ON p.id = istok.product_id
 		LEFT JOIN warehouses w ON istok.warehouse_id = w.id
 		LEFT JOIN warehouse_locations wl ON istok.location_id = wl.id
-		WHERE p.deleted_at IS NULL
+		WHERE p.is_active = true
 	`
 	args := []interface{}{}
 	argIdx := 1
