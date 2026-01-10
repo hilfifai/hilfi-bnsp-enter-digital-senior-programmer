@@ -369,7 +369,7 @@ func (r *InventoryRepository) GetStockReport(ctx context.Context, filter dto.Sto
 func (r *InventoryRepository) GetLowStockReport(ctx context.Context) ([]entity.StockReport, error) {
 	var reports []entity.StockReport
 	query := `
-		SELECT 
+		select * from (SELECT 
 			p.id as product_id,
 			p.sku as product_sku,
 			p.name as product_name,
@@ -388,9 +388,10 @@ func (r *InventoryRepository) GetLowStockReport(ctx context.Context) ([]entity.S
 		LEFT JOIN inventory_stocks istok ON p.id = istok.product_id
 		LEFT JOIN warehouses w ON istok.warehouse_id = w.id
 		LEFT JOIN warehouse_locations wl ON istok.location_id = wl.id
-		WHERE p.is_active = true AND p.current_stock <= p.min_stock
+		WHERE p.is_active = true 
 		GROUP BY p.id, p.sku, p.name, pc.name, w.name, wl.code, p.min_stock, p.max_stock, p.unit_price
-		ORDER BY p.current_stock ASC
+		ORDER BY p.current_stock asc) as low_stok 
+		where  low_stok.current_stock <= low_stok.min_stock
 	`
 	err := r.db.SelectContext(ctx, &reports, query)
 	return reports, err

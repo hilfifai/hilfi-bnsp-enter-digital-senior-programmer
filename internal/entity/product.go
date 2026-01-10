@@ -78,28 +78,29 @@ func (ss *StringSlice) Scan(value interface{}) error {
 }
 
 type Product struct {
-	ID           uuid.UUID         `db:"id" json:"id"`
-	SKU          string            `db:"sku" json:"sku"`
-	Name         string            `db:"name" json:"name"`
-	Description  *string           `db:"description" json:"description,omitempty"`
-	CategoryID   uuid.UUID         `db:"category_id" json:"category_id"`
-	CategoryName string            `db:"category_name" json:"category_name,omitempty"`
-	Category     *ProductCategory  `db:"-" json:"category,omitempty"`
-	UnitPrice    decimal.Decimal   `db:"unit_price" json:"unit_price"`
-	CostPrice    decimal.Decimal   `db:"cost_price" json:"cost_price"`
-	CurrentStock int               `db:"current_stock" json:"current_stock"`
-	MinStock     int               `db:"min_stock" json:"min_stock"`
-	MaxStock     int               `db:"max_stock" json:"max_stock"`
-	Weight       *decimal.Decimal  `db:"weight" json:"weight,omitempty"`
-	Dimensions   JSONMap           `db:"dimensions" json:"dimensions,omitempty"`
-	IsActive     bool              `db:"is_active" json:"is_active"`
-	Attributes   ProductAttributes `db:"attributes" json:"attributes,omitempty"`
-	ImageURLs    StringSlice       `db:"image_urls" json:"image_urls,omitempty"`
-	Barcode      *string           `db:"barcode" json:"barcode,omitempty"`
-	CreatedBy    uuid.UUID         `db:"created_by" json:"-"`
-	UpdatedBy    uuid.UUID         `db:"updated_by" json:"-"`
-	CreatedAt    time.Time         `db:"created_at" json:"created_at"`
-	UpdatedAt    time.Time         `db:"updated_at" json:"updated_at"`
+	ID              uuid.UUID         `db:"id" json:"id"`
+	SKU             string            `db:"sku" json:"sku"`
+	Name            string            `db:"name" json:"name"`
+	Description     *string           `db:"description" json:"description,omitempty"`
+	CategoryID      uuid.UUID         `db:"category_id" json:"category_id"`
+	CategoryName    string            `db:"category_name" json:"category_name,omitempty"`
+	Category        *ProductCategory  `db:"-" json:"category,omitempty"`
+	UnitPrice       decimal.Decimal   `db:"unit_price" json:"unit_price"`
+	CostPrice       decimal.Decimal   `db:"cost_price" json:"cost_price"`
+	CurrentStock    int               `db:"current_stock" json:"current_stock"`
+	MinStock        int               `db:"min_stock" json:"min_stock"`
+	MaxStock        int               `db:"max_stock" json:"max_stock"`
+	Weight          *decimal.Decimal  `db:"weight" json:"weight,omitempty"`
+	Dimensions      JSONMap           `db:"dimensions" json:"dimensions,omitempty"`
+	IsActive        bool              `db:"is_active" json:"is_active"`
+	Attributes      ProductAttributes `db:"attributes" json:"attributes,omitempty"`
+	ImageURLs       StringSlice       `db:"image_urls" json:"image_urls,omitempty"`
+	Barcode         *string           `db:"barcode" json:"barcode,omitempty"`
+	LongDescription *string           `db:"long_description" json:"long_description,omitempty"`
+	CreatedBy       uuid.UUID         `db:"created_by" json:"-"`
+	UpdatedBy       uuid.UUID         `db:"updated_by" json:"-"`
+	CreatedAt       time.Time         `db:"created_at" json:"created_at"`
+	UpdatedAt       time.Time         `db:"updated_at" json:"updated_at"`
 }
 
 type ProductCategory struct {

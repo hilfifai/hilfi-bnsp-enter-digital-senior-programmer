@@ -8,20 +8,21 @@ import (
 )
 
 type CreateProductRequest struct {
-	SKU         string                `json:"sku" validate:"required,min=3,max=100"`
-	Name        string                `json:"name" validate:"required,min=3,max=200"`
-	Description *string               `json:"description,omitempty"`
-	CategoryID  uuid.UUID             `json:"category_id" validate:"required"`
-	UnitPrice   decimal.Decimal       `json:"unit_price" validate:"required"`
-	CostPrice   decimal.Decimal       `json:"cost_price" validate:"required"`
-	MinStock    int                   `json:"min_stock" validate:"min=0"`
-	MaxStock    int                   `json:"max_stock" validate:"min=0"`
-	Weight      *decimal.Decimal      `json:"weight,omitempty"`
-	Dimensions  map[string]string     `json:"dimensions,omitempty"`
-	IsActive    bool                  `json:"is_active"`
-	Attributes  []ProductAttributeDTO `json:"attributes,omitempty"`
-	ImageURLs   []string              `json:"image_urls,omitempty"`
-	Barcode     *string               `json:"barcode,omitempty"`
+	SKU             string                `json:"sku" validate:"required,min=3,max=100"`
+	Name            string                `json:"name" validate:"required,min=3,max=200"`
+	Description     *string               `json:"description,omitempty"`
+	CategoryID      uuid.UUID             `json:"category_id" validate:"required"`
+	UnitPrice       decimal.Decimal       `json:"unit_price" validate:"required"`
+	CostPrice       decimal.Decimal       `json:"cost_price" validate:"required"`
+	MinStock        int                   `json:"min_stock" validate:"min=0"`
+	MaxStock        int                   `json:"max_stock" validate:"min=0"`
+	Weight          *decimal.Decimal      `json:"weight,omitempty"`
+	LongDescription *string               `db:"long_description" json:"long_description,omitempty"`
+	Dimensions      map[string]string     `json:"dimensions,omitempty"`
+	IsActive        bool                  `json:"is_active"`
+	Attributes      []ProductAttributeDTO `json:"attributes,omitempty"`
+	ImageURLs       []string              `json:"image_urls,omitempty"`
+	Barcode         *string               `json:"barcode,omitempty"`
 }
 
 type UpdateProductRequest struct {

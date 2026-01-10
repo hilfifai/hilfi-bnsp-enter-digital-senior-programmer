@@ -39,12 +39,12 @@ func (r *ProductRepository) Create(ctx context.Context, product *entity.Product)
 			id, sku, name, description, category_id, unit_price, cost_price,
 			current_stock, min_stock, max_stock, weight, dimensions, is_active,
 			attributes, image_urls, barcode, created_by, updated_by,
-			created_at, updated_at
+			created_at, updated_at,long_description
 		) VALUES (
 			:id, :sku, :name, :description, :category_id, :unit_price, :cost_price,
 			:current_stock, :min_stock, :max_stock, :weight, :dimensions, :is_active,
 			:attributes, :image_urls, :barcode, :created_by, :updated_by,
-			:created_at, :updated_at
+			:created_at, :updated_at,:long_description
 		)`
 
 	_, err := r.db.NamedExecContext(ctx, query, product)
