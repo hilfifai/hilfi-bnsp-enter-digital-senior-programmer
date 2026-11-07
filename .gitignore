@@ -6,3 +6,9 @@ tmp
 docs/*
 link postman.txt
 LINK_GITHUB.txt
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
